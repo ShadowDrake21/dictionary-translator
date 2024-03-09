@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
+import { TranslateComponent } from './pages/translate/translate.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/sign-up' },
@@ -15,10 +16,11 @@ export const routes: Routes = [
   },
   {
     path: 'translate',
-    loadChildren: () =>
-      import('./pages/translate/translate.component').then(
-        (m) => m.TranslateComponent
-      ),
+    component: TranslateComponent,
+    // loadChildren: () =>
+    //   import('./pages/translate/translate.component').then(
+    //     (m) => m.TranslateComponent
+    //   ),
   },
   {
     path: 'communicate-with-ai',

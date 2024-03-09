@@ -1,1 +1,10 @@
-<p>translate works!</p>
+<div>
+  <p style="display: block" *ngFor="let word of words | async">
+    {{ word.word }}
+    <span *ngFor="let meaning of word.meanings"
+      ><span *ngFor="let definition of meaning.definitions">{{
+        definition.definition
+      }}</span></span
+    >
+  </p>
+</div>
