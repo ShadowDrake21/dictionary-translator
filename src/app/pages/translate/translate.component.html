@@ -1,5 +1,13 @@
 <div>
-  <p style="display: block" *ngFor="let word of words | async">
+  <form [formGroup]="translateForm">
+    <input
+      type="text"
+      placeholder="Translate..."
+      formControlName="word"
+      (input)="onInput()"
+    />
+  </form>
+  <p style="display: block" *ngFor="let word of words$ | async">
     {{ word.word }}
     <span *ngFor="let meaning of word.meanings"
       ><span *ngFor="let definition of meaning.definitions">{{
