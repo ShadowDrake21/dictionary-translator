@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'translator-with-gpt' title`, () => {
+  it(`should have the 'book-angular-app' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('translator-with-gpt');
+    expect(app.title).toEqual('book-angular-app');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, translator-with-gpt');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, book-angular-app');
   });
 });
