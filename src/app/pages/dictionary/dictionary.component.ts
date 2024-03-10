@@ -11,10 +11,12 @@ import {
   Subject,
   catchError,
   debounceTime,
+  distinct,
   distinctUntilChanged,
   filter,
   map,
   switchMap,
+  take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -24,25 +26,22 @@ import { DictionaryService } from '../../core/services/dictionary.service';
 import { CustomeInputComponent } from '../../shared/components/UI/custome-input/custome-input.component';
 
 @Component({
-  selector: 'app-translate',
+  selector: 'app-dictionary',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CustomeInputComponent],
-  templateUrl: './translate.component.html',
-  styleUrl: './translate.component.scss',
+  templateUrl: './dictionary.component.html',
+  styleUrl: './dictionary.component.scss',
 })
-export class TranslateComponent implements OnInit, OnDestroy {
+export class DictionaryComponent {
   private dictionaryService = inject(DictionaryService);
 
-  translateForm = new FormGroup({
+  dictionaryForm = new FormGroup({
     word: new FormControl('', Validators.required),
   });
 
   words$ = new BehaviorSubject<IDictionaryWord[]>([]);
+  favourites$ = new BehaviorSubject<string[]>([]);
   error$ = new BehaviorSubject<string | null>(null);
-
-  ngOnInit(): void {
-    // this.fetchWordData();
-  }
 
   onInputChange(value: string) {
     this.onInput();
@@ -50,7 +49,7 @@ export class TranslateComponent implements OnInit, OnDestroy {
 
   onInput() {
     this.error$.next(null);
-    if (this.translateForm.value.word) {
+    if (this.dictionaryForm.value.word) {
       this.fetchWordData();
       return;
     }
@@ -59,7 +58,7 @@ export class TranslateComponent implements OnInit, OnDestroy {
   }
 
   fetchWordData() {
-    this.translateForm
+    this.dictionaryForm
       .get('word')!
       .valueChanges.pipe(
         debounceTime(700),
@@ -85,5 +84,19 @@ export class TranslateComponent implements OnInit, OnDestroy {
       );
   }
 
-  ngOnDestroy(): void {}
+  onAddToFavs() {
+    this.words$
+      .pipe(
+        map((words) => words.map((word) => word.word)),
+        distinct(),
+        tap((wordNames) => {
+          this.favourites$.next([...this.favourites$.getValue(), ...wordNames]);
+        }),
+        take(1)
+      )
+      .subscribe();
+    this.favourites$.subscribe((words) => {
+      console.log(words);
+    });
+  }
 }

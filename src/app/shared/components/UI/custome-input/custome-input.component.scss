@@ -37,7 +37,7 @@ input[type="text"] {
   left: 0;
   width: 0;
   height: 100%;
-  background-color: #4caf50;
+  background-color: var(--accent-1);
   transition: 0.4s;
 }
 .effect-3 ~ .focus-border:after {
