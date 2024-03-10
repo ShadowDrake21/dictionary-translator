@@ -1,18 +1,99 @@
-<div>
-  <form [formGroup]="translateForm">
-    <input
-      type="text"
-      placeholder="Translate..."
-      formControlName="word"
-      (input)="onInput()"
-    />
-  </form>
-  <p style="display: block" *ngFor="let word of words$ | async">
-    {{ word.word }}
-    <span *ngFor="let meaning of word.meanings"
-      ><span *ngFor="let definition of meaning.definitions">{{
-        definition.definition
-      }}</span></span
+<section class="translate__section container">
+  <div class="translate__wrapper">
+    <form [formGroup]="translateForm" class="translate__form translate__part">
+      <ui-custome-input
+        widthValue="80%"
+        formControlName="word"
+        placeholder="Translate a word..."
+        (inputChange)="onInputChange($event)"
+      ></ui-custome-input>
+    </form>
+    <!-- <div
+      class="translate__results translate__part"
+      *ngIf="{ words: words$ | async, error: error$ | async } as data"
     >
-  </p>
-</div>
+      <ng-container *ngFor="let word of data.words">
+        <p style="display: block">
+          {{ word.word }}
+        </p>
+        <ul>
+          <li *ngFor="let meaning of word.meanings">
+            <span *ngFor="let definition of meaning.definitions">{{
+              definition.definition
+            }}</span>
+          </li>
+        </ul>
+      </ng-container>
+      <p class="error translate__error" *ngIf="data.error">
+        {{ data.error }}
+      </p>
+
+      <div *ngIf="data.words?.length === 0 && !data.error">
+        <p>Lets start translate!</p>
+      </div>
+    </div> -->
+
+    <div
+      class="translate__results translate__part"
+      *ngIf="{ words: words$ | async, error: error$ | async } as data"
+    >
+      @if(!data.error) {
+      <ng-container *ngIf="data.words?.length; else emptyResult">
+        <div *ngFor="let word of data.words">
+          <p style="display: block">
+            {{ word.word }}
+          </p>
+          <ul>
+            <li *ngFor="let meaning of word.meanings">
+              <ng-container *ngFor="let definition of meaning.definitions">{{
+                definition.definition
+              }}</ng-container>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+      } @else {
+      <p class="error translate__error">{{ data.error }}</p>
+      }
+      <ng-template #emptyResult>
+        <p>Lets start translate!</p>
+      </ng-template>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="translate__section container">
+  <div class="translate__wrapper">
+    <form [formGroup]="translateForm" class="translate__form translate__part">
+      <ui-custome-input
+        widthValue="80%"
+        formControlName="word"
+        placeholder="Translate a word..."
+        (inputChange)="onInputChange($event)"
+      ></ui-custome-input>
+    </form>
+    <div class="translate__results translate__part">
+      @if(!error$.getValue()) {
+      <div *ngIf="words$.getValue().length > 0; else emptyResult">
+        <div *ngFor="let word of words$ | async">
+          <p style="display: block">
+            {{ word.word }}
+          </p>
+          <ul>
+            <li *ngFor="let meaning of word.meanings">
+              <span *ngFor="let definition of meaning.definitions">{{
+                definition.definition
+              }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <ng-template #emptyResult>
+        <p>Lets start translate!</p>
+      </ng-template>
+      } @else {
+      <p class="error translate__error">{{ error$ | async }}</p>
+      }
+    </div>
+  </div>
+</section> -->

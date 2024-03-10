@@ -1,0 +1,33 @@
+.translate__section {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.translate__wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.translate__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.translate__part {
+  width: 50%;
+}
+
+.translate__results {
+  min-height: 500px;
+  background-color: white;
+  margin: 40px 0;
+  border-radius: 25px;
+}
+
+.translate__error {
+  text-align: center;
+  font-size: 18px;
+  line-height: 22px;
+}
