@@ -1,0 +1,13 @@
+<div class="col-3" [ngStyle]="{ width: widthValue }">
+  <input
+    class="effect-3"
+    name="input"
+    [type]="type"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [(ngModel)]="value"
+    (input)="onInputChange($event)"
+    (blur)="onTouched()"
+  />
+  <span class="focus-border"></span>
+</div>
