@@ -1,0 +1,67 @@
+<section class="dictionary__section container">
+  <div class="dictionary__wrapper">
+    <form
+      [formGroup]="dictionaryForm"
+      class="dictionary__form dictionary__part"
+    >
+      <h1 class="main__title">
+        {{ "Dictionary by Drake21 on RxJS|GPT" | uppercase }}
+      </h1>
+      <ui-custome-input
+        widthValue="80%"
+        formControlName="word"
+        placeholder="Search a meaning a word..."
+        (inputChange)="onInputChange($event)"
+      ></ui-custome-input>
+      <div
+        class="dictionary__reset-wrapper"
+        *ngIf="(favourites$ | async)?.length"
+      >
+        <button
+          class="dictionary__reset-button"
+          type="button"
+          (click)="onClearFavs()"
+        >
+          Clear a favourites
+        </button>
+      </div>
+    </form>
+    <div
+      class="dictionary__results dictionary__part"
+      *ngIf="{ words: words$ | async, error: error$ | async } as data"
+    >
+      @if(!data.error) {
+      <ng-container *ngIf="data.words?.length; else emptyResult">
+        <div *ngFor="let word of data.words">
+          <h2 style="display: block">
+            {{ word.word }}
+          </h2>
+          <ul>
+            <li *ngFor="let meaning of word.meanings">
+              <h4>
+                Part of speech: <span>{{ meaning.partOfSpeech }}</span>
+              </h4>
+              <ng-container *ngFor="let definition of meaning.definitions">{{
+                definition.definition
+              }}</ng-container>
+            </li>
+          </ul>
+        </div>
+        <button
+          type="button"
+          class="dictionary__add-button"
+          (click)="onAddToFavs()"
+        >
+          Add to Favourites
+        </button>
+      </ng-container>
+
+      } @else {
+      <p class="error dictionary__special">{{ data.error }}</p>
+      }
+      <ng-template #emptyResult>
+        <p class="dictionary__special">Lets start to explore!</p>
+      </ng-template>
+    </div>
+  </div>
+</section>

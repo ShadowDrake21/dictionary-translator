@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --accent-1: #a682ff;
+  --accent-2: #5887ff;
+  --error: red;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #715aff;
+  margin: 0;
+  padding: 0;
+}
+
+.body {
+  background-color: rgba(#55c1ff, 0.5);
+  color: #102e4a;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  max-width: 1480px;
+  padding: 0 10px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.main__title {
+  font-size: 34px;
+  line-height: 40px;
+}
+
+.error {
+  color: var(--error);
+}
