@@ -10,11 +10,6 @@ export const routes: Routes = [
     component: SignUpComponent,
   },
   {
-    path: 'home',
-    loadChildren: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
-  },
-  {
     path: 'dictionary',
     component: DictionaryComponent,
     // loadChildren: () =>
