@@ -13,6 +13,18 @@
         placeholder="Search a meaning a word..."
         (inputChange)="onInputChange($event)"
       ></ui-custome-input>
+      <div
+        class="dictionary__reset-wrapper"
+        *ngIf="(favourites$ | async)?.length"
+      >
+        <button
+          class="dictionary__reset-button"
+          type="button"
+          (click)="onClearFavs()"
+        >
+          Clear a favourites
+        </button>
+      </div>
     </form>
     <div
       class="dictionary__results dictionary__part"
@@ -37,7 +49,7 @@
         </div>
         <button
           type="button"
-          class="dictionary__button"
+          class="dictionary__add-button"
           (click)="onAddToFavs()"
         >
           Add to Favourites

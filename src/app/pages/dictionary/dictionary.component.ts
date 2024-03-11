@@ -32,7 +32,7 @@ import { CustomeInputComponent } from '../../shared/components/UI/custome-input/
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
 })
-export class DictionaryComponent {
+export class DictionaryComponent implements OnInit {
   private dictionaryService = inject(DictionaryService);
 
   dictionaryForm = new FormGroup({
@@ -42,6 +42,10 @@ export class DictionaryComponent {
   words$ = new BehaviorSubject<IDictionaryWord[]>([]);
   favourites$ = new BehaviorSubject<string[]>([]);
   error$ = new BehaviorSubject<string | null>(null);
+
+  ngOnInit(): void {
+    console.log('favourites$', this.favourites$);
+  }
 
   onInputChange(value: string) {
     this.onInput();
@@ -90,13 +94,19 @@ export class DictionaryComponent {
         map((words) => words.map((word) => word.word)),
         distinct(),
         tap((wordNames) => {
-          this.favourites$.next([...this.favourites$.getValue(), ...wordNames]);
+          const uniqueWords = [
+            ...new Set([...this.favourites$.getValue(), ...wordNames]),
+          ];
+          this.favourites$.next(uniqueWords);
+          console.log(this.favourites$.getValue());
         }),
         take(1)
       )
       .subscribe();
-    this.favourites$.subscribe((words) => {
-      console.log(words);
-    });
+  }
+
+  onClearFavs() {
+    this.favourites$.next([]);
+    console.log(this.favourites$.getValue());
   }
 }

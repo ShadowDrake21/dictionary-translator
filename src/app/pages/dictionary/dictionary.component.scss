@@ -8,6 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 50px;
 }
 
 .dictionary__form {
@@ -36,7 +37,7 @@
   line-height: 22px;
 }
 
-.dictionary__button {
+.dictionary__add-button {
   cursor: pointer;
   outline: 0;
   color: #fff;
@@ -56,5 +57,30 @@
     color: #fff;
     background-color: #0b5ed7;
     border-color: #0a58ca;
+  }
+}
+
+.dictionary__reset-wrapper {
+  text-align: center;
+}
+
+.dictionary__reset-button {
+  display: inline-block;
+  outline: 0;
+  cursor: pointer;
+  text-align: center;
+  border: 0;
+  padding: 7px 16px;
+  min-height: 36px;
+  min-width: 36px;
+  color: #ffffff;
+  background: #008060;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px 0px,
+    rgba(0, 0, 0, 0.2) 0px -1px 0px 0px inset;
+  &:hover {
+    background: #006e52;
   }
 }
