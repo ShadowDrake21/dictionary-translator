@@ -23,14 +23,14 @@ export const routes: Routes = [
     //   ),
   },
   {
-    path: 'communicate-with-ai',
+    path: 'translate',
     loadChildren: () =>
-      import('./pages/communicate-with-ai/communicate-with-ai.component').then(
-        (m) => m.CommunicateWithAiComponent
+      import('./pages/translate/translate.component').then(
+        (m) => m.TranslateComponent
       ),
   },
   {
-    path: 'communicate-with-ai',
+    path: 'profile',
     loadChildren: () =>
       import('./pages/profile/profile.component').then(
         (m) => m.ProfileComponent
