@@ -15,7 +15,7 @@
       ></ui-custome-input>
       <div
         class="dictionary__reset-wrapper"
-        *ngIf="(favourites$ | async)?.length"
+        *ngIf="(favourites$$ | async)?.length"
       >
         <button
           class="dictionary__reset-button"
@@ -28,7 +28,7 @@
     </form>
     <div
       class="dictionary__results dictionary__part"
-      *ngIf="{ words: words$ | async, error: error$ | async } as data"
+      *ngIf="{ words: words$$ | async, error: error$$ | async } as data"
     >
       @if(!data.error) {
       <ng-container *ngIf="data.words?.length; else emptyResult">
