@@ -1,29 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '../../core/authentication/auth.service';
-import { getAuth } from '@firebase/auth';
+import { User, getAuth } from '@firebase/auth';
 import { ISignIn } from '../../shared/models/auth.model';
 import { FirebaseError } from 'firebase/app';
 import { delay } from 'rxjs';
+import { SignOutComponent } from '../../shared/components/sign-out/sign-out.component';
+import { Router } from '@angular/router';
+import { GoogleBtnComponent } from './components/google-btn/google-btn.component';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SignOutComponent, GoogleBtnComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss',
 })
 export class SignInComponent implements OnInit {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   isSignedIn: boolean = false;
+  currentUser?: User | null;
   signInData?: ISignIn | null;
   signInError?: FirebaseError;
 
   ngOnInit(): void {
-    this.authService.user$.pipe(delay(1000)).subscribe((user) => {
+    this.authService.user$.subscribe((user) => {
       this.isSignedIn = !!user;
-      console.log('is logged in', !!user, user);
+      this.currentUser = user;
     });
   }
 
@@ -32,6 +37,8 @@ export class SignInComponent implements OnInit {
       (signInResult: ISignIn | null) => {
         console.log('successful sign-in');
         this.signInData = signInResult;
+        console.log('signInData', this.signInData);
+        this.router.navigateByUrl('/dictionary');
       },
       (error: FirebaseError) => {
         console.error('Error during sign-in');
@@ -40,14 +47,7 @@ export class SignInComponent implements OnInit {
     );
   }
 
-  signOut() {
-    this.authService.signOut().subscribe(
-      () => {
-        console.log('successful sign out');
-      },
-      () => {
-        console.log('error during signing out');
-      }
-    );
+  onCancel() {
+    this.router.navigateByUrl('/dictionary');
   }
 }

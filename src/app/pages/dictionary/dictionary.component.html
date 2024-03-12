@@ -1,5 +1,5 @@
 <section class="section container">
-  <div class="inner section__inner">
+  <div class="inner dictionary__inner">
     <form
       [formGroup]="dictionaryForm"
       class="dictionary__form dictionary__part"
@@ -17,13 +17,20 @@
         class="dictionary__reset-wrapper"
         *ngIf="(favourites$$ | async)?.length"
       >
-        <button
+        <!-- <button
           class="dictionary__reset-button"
           type="button"
           (click)="onClearFavs()"
         >
           Clear a favourites
-        </button>
+        </button> -->
+        <ui-custom-btn
+          (click)="onClearFavs()"
+          text="Clear a favourites"
+          color="#008060"
+          width="50%"
+          >Clear a favourites</ui-custom-btn
+        >
       </div>
     </form>
     <div
@@ -47,13 +54,10 @@
             </li>
           </ul>
         </div>
-        <button
-          type="button"
-          class="dictionary__add-button"
-          (click)="onAddToFavs()"
-        >
-          Add to Favourites
-        </button>
+        <ui-custom-btn
+          (onClick)="onAddToFavs()"
+          text="Add to Favourites"
+        ></ui-custom-btn>
       </ng-container>
 
       } @else {
