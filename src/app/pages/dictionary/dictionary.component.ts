@@ -39,12 +39,12 @@ export class DictionaryComponent implements OnInit {
     word: new FormControl('', Validators.required),
   });
 
-  words$ = new BehaviorSubject<IDictionaryWord[]>([]);
-  favourites$ = new BehaviorSubject<string[]>([]);
-  error$ = new BehaviorSubject<string | null>(null);
+  words$$ = new BehaviorSubject<IDictionaryWord[]>([]);
+  favourites$$ = new BehaviorSubject<string[]>([]);
+  error$$ = new BehaviorSubject<string | null>(null);
 
   ngOnInit(): void {
-    console.log('favourites$', this.favourites$);
+    console.log('favourites$', this.favourites$$);
   }
 
   onInputChange(value: string) {
@@ -52,13 +52,13 @@ export class DictionaryComponent implements OnInit {
   }
 
   onInput() {
-    this.error$.next(null);
+    this.error$$.next(null);
     if (this.dictionaryForm.value.word) {
       this.fetchWordData();
       return;
     }
 
-    this.words$.next([]);
+    this.words$$.next([]);
   }
 
   fetchWordData() {
@@ -71,7 +71,7 @@ export class DictionaryComponent implements OnInit {
           if (searchTerm) {
             return this.dictionaryService.getWords(searchTerm || '').pipe(
               catchError((error) => {
-                this.error$.next(
+                this.error$$.next(
                   `Sorry pal, there is no such word. More about an error: ${error.message}`
                 );
                 return [];
@@ -83,22 +83,22 @@ export class DictionaryComponent implements OnInit {
         })
       )
       .subscribe(
-        (words: IDictionaryWord[]) => this.words$.next([...words]),
+        (words: IDictionaryWord[]) => this.words$$.next([...words]),
         () => console.log('Completed')
       );
   }
 
   onAddToFavs() {
-    this.words$
+    this.words$$
       .pipe(
         map((words) => words.map((word) => word.word)),
         distinct(),
         tap((wordNames) => {
           const uniqueWords = [
-            ...new Set([...this.favourites$.getValue(), ...wordNames]),
+            ...new Set([...this.favourites$$.getValue(), ...wordNames]),
           ];
-          this.favourites$.next(uniqueWords);
-          console.log(this.favourites$.getValue());
+          this.favourites$$.next(uniqueWords);
+          console.log(this.favourites$$.getValue());
         }),
         take(1)
       )
@@ -106,7 +106,7 @@ export class DictionaryComponent implements OnInit {
   }
 
   onClearFavs() {
-    this.favourites$.next([]);
-    console.log(this.favourites$.getValue());
+    this.favourites$$.next([]);
+    console.log(this.favourites$$.getValue());
   }
 }
