@@ -4,6 +4,7 @@ import { AuthService } from '../../core/authentication/auth.service';
 import { getAuth } from '@firebase/auth';
 import { ISignIn } from '../../shared/models/auth.model';
 import { FirebaseError } from 'firebase/app';
+import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-sign-up',
@@ -15,11 +16,13 @@ import { FirebaseError } from 'firebase/app';
 export class SignInComponent implements OnInit {
   private authService = inject(AuthService);
 
+  isSignedIn: boolean = false;
   signInData?: ISignIn | null;
   signInError?: FirebaseError;
 
   ngOnInit(): void {
-    this.authService.user$.subscribe((user) => {
+    this.authService.user$.pipe(delay(1000)).subscribe((user) => {
+      this.isSignedIn = !!user;
       console.log('is logged in', !!user, user);
     });
   }
