@@ -24,11 +24,17 @@ import {
 import { IDictionaryWord } from '../../shared/models/dictionaty.model';
 import { DictionaryService } from '../../core/services/dictionary.service';
 import { CustomeInputComponent } from '../../shared/components/UI/custome-input/custome-input.component';
+import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 
 @Component({
   selector: 'app-dictionary',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CustomeInputComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CustomeInputComponent,
+    CustomBtnComponent,
+  ],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
 })

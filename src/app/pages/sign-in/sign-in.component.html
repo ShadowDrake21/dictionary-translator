@@ -3,23 +3,15 @@
     <div class="sign-in__logo-wrapper">
       <img class="sign-in__logo" src="/assets/logo.png" alt="logo" />
     </div>
-    <div [ngClass]="{ 'not_signed-in': !isSignedIn }">
-      <button
-        class="firebaseui-idp-google flex-center--all noselect"
-        (click)="signIn()"
-      >
-        <span class="firebaseui-idp-icon-wrapper">
-          <img
-            class="firebaseui-idp-icon"
-            alt="logo"
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-          />
-        </span>
-        <span class="firebaseui-idp-text firebaseui-idp-text-long">
-          Sign in with Google
-        </span>
-      </button>
-      <button (click)="signOut()">Sign Out</button>
+    <div [class.signed-in]="isSignedIn">
+      <ui-google-btn (onSignIn)="signIn()"></ui-google-btn>
+    </div>
+    <div [class.signed-in]="!isSignedIn">
+      <p>Are you sure that you want to sign out?</p>
+      <div>
+        <auth-sign-out></auth-sign-out>
+        <button type="button" (click)="onCancel()">Cancel</button>
+      </div>
     </div>
   </div>
 </section>
