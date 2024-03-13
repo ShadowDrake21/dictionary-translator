@@ -8,38 +8,66 @@ import {
   remove,
   set,
 } from 'firebase/database';
+import { Observable, catchError, from, map } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class DatabaseManipulationsService {
   private database: Database = getDatabase();
 
-  writeDictionaryWord(userUid: string, word: string) {
-    set(ref(this.database, `dictionary/${userUid}/words/${word}`), {
-      word,
-    });
-  }
-
-  getDictionaryWords(userUid: string) {
-    const databaseRef = ref(this.database);
-    get(child(databaseRef, `dictionary/${userUid}/words`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          console.log(snapshot.val());
-        } else {
-          console.log('No data available');
-        }
+  writeDictionaryWord(
+    userUid: string | undefined,
+    word: string
+  ): Observable<void> {
+    return from(
+      set(ref(this.database, `dictionary/${userUid}/words/${word}`), {
+        word,
       })
-      .catch((error) => {
+    ).pipe(
+      catchError((error) => {
+        console.log(error);
+        throw error;
+      })
+    );
+  }
+
+  getDictionaryWords(userUid: string | undefined): Observable<string[] | null> {
+    const databaseRef = ref(this.database);
+    return from(get(child(databaseRef, `dictionary/${userUid}/words`))).pipe(
+      map((snapshot) => {
+        if (snapshot.exists()) {
+          const values: string[] = Object.values(snapshot.val()).map(
+            (entry: any) => entry.word
+          );
+          return values;
+        } else {
+          return null;
+        }
+      }),
+      catchError((error) => {
         console.error(error);
-      });
+        throw error;
+      })
+    );
   }
 
-  deleteDictionaryWord(userUid: string, word: string) {
-    remove(ref(this.database, `dictionary/${userUid}/words/${word}`));
+  deleteDictionaryWord(userUid: string, word: string): Observable<void> {
+    return from(
+      remove(ref(this.database, `dictionary/${userUid}/words/${word}`))
+    ).pipe(
+      catchError((error) => {
+        console.log(error);
+        throw error;
+      })
+    );
   }
 
-  deleteFullUserDictionary(userUid: string) {
-    remove(ref(this.database, `dictionary/${userUid}`));
+  deleteFullUserDictionary(userUid: string | undefined): Observable<void> {
+    return from(remove(ref(this.database, `dictionary/${userUid}`))).pipe(
+      catchError((error) => {
+        console.log(error);
+        throw error;
+      })
+    );
   }
 }
