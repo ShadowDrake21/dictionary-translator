@@ -55,5 +55,12 @@ h6 {
 }
 
 .error {
-  color: var(--error);
+  color: black;
+}
+
+.error__wrapper {
+  background-color: var(--error);
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 10px;
 }

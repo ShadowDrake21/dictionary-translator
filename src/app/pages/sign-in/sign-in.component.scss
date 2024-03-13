@@ -12,6 +12,21 @@
       width: 100%;
     }
   }
+  &__out-confirm {
+    border: 1px solid black;
+    padding: 20px 30px;
+    border-radius: 10px;
+    background-color: white;
+    &__text {
+      font-weight: 600;
+    }
+    &__btns {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+  }
 }
 
 .signed-in {

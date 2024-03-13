@@ -8,11 +8,17 @@ import { delay } from 'rxjs';
 import { SignOutComponent } from '../../shared/components/sign-out/sign-out.component';
 import { Router } from '@angular/router';
 import { GoogleBtnComponent } from './components/google-btn/google-btn.component';
+import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule, SignOutComponent, GoogleBtnComponent],
+  imports: [
+    CommonModule,
+    SignOutComponent,
+    GoogleBtnComponent,
+    CustomBtnComponent,
+  ],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss',
 })
