@@ -1,0 +1,27 @@
+<section class="section container">
+  <div class="sign-in__inner inner">
+    <div
+      class="sign-in__logo-wrapper"
+      [style]="{ display: isSignedIn ? 'none' : 'block' }"
+    >
+      <img class="sign-in__logo" src="/assets/logo.png" alt="logo" />
+    </div>
+    <div [class.signed-in]="isSignedIn" class="sign-in__btn">
+      <ui-google-btn (onSignIn)="signIn()"></ui-google-btn>
+    </div>
+    <div [class.signed-in]="!isSignedIn" class="sign-in__out-confirm">
+      <p class="sign-in__out-confirm__text">
+        {{ "Are you sure that you want to sign out?" | uppercase }}
+      </p>
+      <div class="sign-in__out-confirm__btns">
+        <auth-sign-out></auth-sign-out>
+        <ui-custom-btn
+          (click)="onCancel()"
+          text="Back to system"
+          color="#008060"
+        ></ui-custom-btn>
+      </div>
+    </div>
+    <p class="error error__wrapper" *ngIf="signInError">{{ signInError }}</p>
+  </div>
+</section>

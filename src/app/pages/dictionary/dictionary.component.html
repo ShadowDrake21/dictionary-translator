@@ -1,11 +1,11 @@
-<section class="dictionary__section container">
-  <div class="dictionary__wrapper">
+<section class="section container">
+  <div class="inner dictionary__inner">
     <form
       [formGroup]="dictionaryForm"
       class="dictionary__form dictionary__part"
     >
       <h1 class="main__title">
-        {{ "Dictionary by Drake21 on RxJS|GPT" | uppercase }}
+        {{ "English dictionary by Drake21 on RxJS" | uppercase }}
       </h1>
       <ui-custome-input
         widthValue="80%"
@@ -15,20 +15,27 @@
       ></ui-custome-input>
       <div
         class="dictionary__reset-wrapper"
-        *ngIf="(favourites$ | async)?.length"
+        *ngIf="(favourites$$ | async)?.length"
       >
-        <button
+        <!-- <button
           class="dictionary__reset-button"
           type="button"
           (click)="onClearFavs()"
         >
           Clear a favourites
-        </button>
+        </button> -->
+        <ui-custom-btn
+          (click)="onClearFavs()"
+          text="Clear a favourites"
+          color="#008060"
+          width="50%"
+          >Clear a favourites</ui-custom-btn
+        >
       </div>
     </form>
     <div
       class="dictionary__results dictionary__part"
-      *ngIf="{ words: words$ | async, error: error$ | async } as data"
+      *ngIf="{ words: words$$ | async, error: error$$ | async } as data"
     >
       @if(!data.error) {
       <ng-container *ngIf="data.words?.length; else emptyResult">
@@ -47,13 +54,10 @@
             </li>
           </ul>
         </div>
-        <button
-          type="button"
-          class="dictionary__add-button"
-          (click)="onAddToFavs()"
-        >
-          Add to Favourites
-        </button>
+        <ui-custom-btn
+          (onClick)="onAddToFavs()"
+          text="Add to Favourites"
+        ></ui-custom-btn>
       </ng-container>
 
       } @else {
