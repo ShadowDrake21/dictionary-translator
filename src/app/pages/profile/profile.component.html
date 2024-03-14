@@ -1,21 +1,38 @@
 <app-header></app-header>
-<section class="section container">
+<section class="section container profile">
   <div class="inner profile__inner">
-    <ul *ngIf="favourites$$ | async as favourites">
-      <li *ngFor="let fav of favourites">
-        <span>{{ fav }}</span>
-        <button type="button" (click)="onClearFav(fav)">Remove</button>
-      </li>
-      <button
-        type="button"
+    <div
+      *ngIf="favourites$$ | async as favourites"
+      class="profile__list-wrapper"
+    >
+      <ul class="profile__list">
+        <li
+          *ngFor="let fav of favourites"
+          class="profile__list-item"
+          (dblclick)="onNavigateByWord(fav)"
+        >
+          <span class="profile__list-item__span">{{ fav }}</span>
+          <button
+            class="profile__list-item__close"
+            type="button"
+            (click)="onClearFav(fav)"
+          >
+            <fa-icon
+              [icon]="faClose"
+              class="profile__list-item__icon"
+            ></fa-icon>
+          </button>
+        </li>
+      </ul>
+      <ui-custom-btn
         *ngIf="favourites.length; else noFavourites"
         (click)="onClearAllFavs()"
-      >
-        Remove all
-      </button>
-    </ul>
-    <ng-template #noFavourites>
-      <p>You didn't highlight any word</p>
+        text="Remove all"
+        color="rgb(255, 28, 28)"
+      ></ui-custom-btn>
+    </div>
+    <ng-template class="profile__exception" #noFavourites>
+      <p class="profile__exception-text">You didn't highlight any word</p>
     </ng-template>
   </div>
 </section>

@@ -1,22 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { BehaviorSubject, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { User } from '@firebase/auth';
+import { Router } from '@angular/router';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { AuthService } from '../../core/authentication/auth.service';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
-import { BehaviorSubject, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { User } from '@firebase/auth';
+import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, HeaderComponent, FaIconComponent, CustomBtnComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private databaseManipulationsService = inject(DatabaseManipulationsService);
+  private router = inject(Router);
+
+  faClose = faClose;
 
   userUid: string | undefined = undefined;
 
@@ -65,12 +72,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
               (fav) => fav !== word
             );
             this.favourites$$.next(filteredFavourites);
+          } else {
+            this.favourites$$.next([]);
           }
         })
       )
       .subscribe(() => {
         console.log(`word ${word} deleted`);
       });
+  }
+
+  onNavigateByWord(word: string) {
+    console.log('onNavigateByWord', word);
+    this.router.navigateByUrl('/dictionary');
   }
 
   onClearAllFavs() {
