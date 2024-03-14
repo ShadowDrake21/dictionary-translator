@@ -13,18 +13,20 @@ import {
   debounceTime,
   distinct,
   distinctUntilChanged,
-  filter,
   map,
   switchMap,
   take,
   takeUntil,
   tap,
 } from 'rxjs';
+import { User } from '@firebase/auth';
 
 import { IDictionaryWord } from '../../shared/models/dictionaty.model';
 import { DictionaryService } from '../../core/services/dictionary.service';
 import { CustomeInputComponent } from '../../shared/components/UI/custome-input/custome-input.component';
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
+import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
+import { AuthService } from '../../core/authentication/auth.service';
 
 @Component({
   selector: 'app-dictionary',
@@ -38,18 +40,27 @@ import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
 })
-export class DictionaryComponent implements OnInit {
+export class DictionaryComponent implements OnInit, OnDestroy {
+  private authService = inject(AuthService);
   private dictionaryService = inject(DictionaryService);
+  private databaseManipulationService = inject(DatabaseManipulationsService);
 
   dictionaryForm = new FormGroup({
     word: new FormControl('', Validators.required),
   });
+
+  user$$ = new BehaviorSubject<User | null>(null);
+  destroy$$ = new Subject<void>();
 
   words$$ = new BehaviorSubject<IDictionaryWord[]>([]);
   favourites$$ = new BehaviorSubject<string[]>([]);
   error$$ = new BehaviorSubject<string | null>(null);
 
   ngOnInit(): void {
+    this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
+      this.user$$.next(user);
+      this.getDictionaryWords();
+    });
     console.log('favourites$', this.favourites$$);
   }
 
@@ -65,6 +76,17 @@ export class DictionaryComponent implements OnInit {
     }
 
     this.words$$.next([]);
+  }
+
+  getDictionaryWords() {
+    this.databaseManipulationService
+      .getDictionaryWords(this.user$$.getValue()?.uid)
+      .subscribe((result: string[] | null) => {
+        if (result) {
+          this.favourites$$.next(result);
+          console.log(this.favourites$$.getValue());
+        }
+      });
   }
 
   fetchWordData() {
@@ -104,6 +126,11 @@ export class DictionaryComponent implements OnInit {
             ...new Set([...this.favourites$$.getValue(), ...wordNames]),
           ];
           this.favourites$$.next(uniqueWords);
+          this.databaseManipulationService
+            .writeDictionaryWord(this.user$$.getValue()?.uid, wordNames[0])
+            .subscribe(() => {
+              console.log('word added');
+            });
           console.log(this.favourites$$.getValue());
         }),
         take(1)
@@ -113,6 +140,14 @@ export class DictionaryComponent implements OnInit {
 
   onClearFavs() {
     this.favourites$$.next([]);
+    this.databaseManipulationService
+      .deleteFullUserDictionary(this.user$$.getValue()?.uid)
+      .subscribe(() => console.log('all words deleted'));
     console.log(this.favourites$$.getValue());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$$.next();
+    this.destroy$$.complete();
   }
 }
