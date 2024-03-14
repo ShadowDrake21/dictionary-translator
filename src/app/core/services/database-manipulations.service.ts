@@ -51,7 +51,10 @@ export class DatabaseManipulationsService {
     );
   }
 
-  deleteDictionaryWord(userUid: string, word: string): Observable<void> {
+  deleteDictionaryWord(
+    userUid: string | undefined,
+    word: string
+  ): Observable<void> {
     return from(
       remove(ref(this.database, `dictionary/${userUid}/words/${word}`))
     ).pipe(

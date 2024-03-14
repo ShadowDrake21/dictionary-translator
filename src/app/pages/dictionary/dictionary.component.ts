@@ -45,7 +45,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 export class DictionaryComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private dictionaryService = inject(DictionaryService);
-  private databaseManipulationService = inject(DatabaseManipulationsService);
+  private databaseManipulationsService = inject(DatabaseManipulationsService);
 
   dictionaryForm = new FormGroup({
     word: new FormControl('', Validators.required),
@@ -85,7 +85,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   getDictionaryWords(userUid: string): void {
-    this.databaseManipulationService
+    this.databaseManipulationsService
       .getDictionaryWords(userUid)
       .subscribe((result: string[] | null) => {
         if (result) {
@@ -132,7 +132,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
             ...new Set([...this.favourites$$.getValue(), ...wordNames]),
           ];
           this.favourites$$.next(uniqueWords);
-          this.databaseManipulationService
+          this.databaseManipulationsService
             .writeDictionaryWord(this.user$$.getValue()?.uid, wordNames[0])
             .subscribe(() => {
               console.log('word added');
@@ -144,9 +144,9 @@ export class DictionaryComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  onClearFavs() {
+  onClearAllFavs() {
     this.favourites$$.next([]);
-    this.databaseManipulationService
+    this.databaseManipulationsService
       .deleteFullUserDictionary(this.user$$.getValue()?.uid)
       .subscribe(() => console.log('all words deleted'));
     console.log(this.favourites$$.getValue());

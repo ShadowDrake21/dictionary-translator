@@ -1,7 +1,16 @@
 <header class="header">
   <div class="container header__inner">
-    <a [routerLink]="['profile']" class="header__link"
+    <a
+      [routerLink]="['/profile']"
+      class="header__link"
+      *ngIf="pageIdentificator === 'dictionary'"
       ><fa-icon [icon]="faUser"></fa-icon>
+    </a>
+    <a
+      [routerLink]="['/dictionary']"
+      class="header__link"
+      *ngIf="pageIdentificator === 'profile'"
+      ><fa-icon [icon]="faHome"></fa-icon>
     </a>
     <auth-sign-out></auth-sign-out>
   </div>

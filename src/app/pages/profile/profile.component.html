@@ -1,1 +1,21 @@
-<p>profile works!</p>
+<app-header></app-header>
+<section class="section container">
+  <div class="inner profile__inner">
+    <ul *ngIf="favourites$$ | async as favourites">
+      <li *ngFor="let fav of favourites">
+        <span>{{ fav }}</span>
+        <button type="button" (click)="onClearFav(fav)">Remove</button>
+      </li>
+      <button
+        type="button"
+        *ngIf="favourites.length; else noFavourites"
+        (click)="onClearAllFavs()"
+      >
+        Remove all
+      </button>
+    </ul>
+    <ng-template #noFavourites>
+      <p>You didn't highlight any word</p>
+    </ng-template>
+  </div>
+</section>

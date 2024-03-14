@@ -11,9 +11,11 @@
     gap: 20px;
   }
   &__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 30px;
     height: 30px;
-
     fa-icon {
       font-size: 30px;
       color: #fff;
