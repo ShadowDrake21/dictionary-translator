@@ -1,8 +1,8 @@
 <app-header></app-header>
-<section class="section container profile">
+<section class="container profile">
   <div class="inner profile__inner">
     <div
-      *ngIf="favourites$$ | async as favourites"
+      *ngIf="visibleFavourites$$ | async as favourites"
       class="profile__list-wrapper"
     >
       <ul class="profile__list">
@@ -30,7 +30,27 @@
         text="Remove all"
         color="rgb(255, 28, 28)"
       ></ui-custom-btn>
+      <div class="profile__pagination" *ngIf="favourites.length">
+        <button
+          class="profile__pagination-btn"
+          type="button"
+          (click)="prevPage()"
+        >
+          Previous
+        </button>
+        <p class="profile__pagination-text">
+          Page {{ currentPage$$ | async }} of {{ calcPageCount() }}
+        </p>
+        <button
+          class="profile__pagination-btn"
+          type="button"
+          (click)="nextPage()"
+        >
+          Next
+        </button>
+      </div>
     </div>
+
     <ng-template class="profile__exception" #noFavourites>
       <p class="profile__exception-text">You didn't highlight any word</p>
     </ng-template>

@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { BehaviorSubject, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  combineLatest,
+  map,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { User } from '@firebase/auth';
 import { Router } from '@angular/router';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
@@ -33,6 +41,38 @@ export class ProfileComponent implements OnInit, OnDestroy {
   favourites$$ = new BehaviorSubject<string[]>([]);
   error$$ = new BehaviorSubject<string | null>(null);
 
+  pageSize = 4;
+  currentPage$$ = new BehaviorSubject<number>(1);
+
+  visibleFavourites$$ = combineLatest([
+    this.favourites$$,
+    this.currentPage$$,
+  ]).pipe(
+    map(([favourites, currentPage]) => {
+      const startIndex = (currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return favourites.slice(startIndex, endIndex);
+    })
+  );
+
+  nextPage(): void {
+    const currentPage = this.currentPage$$.getValue();
+    if (currentPage < this.calcPageCount()) {
+      this.currentPage$$.next(currentPage + 1);
+    }
+  }
+
+  prevPage(): void {
+    const currentPage = this.currentPage$$.getValue();
+    if (currentPage > 1) {
+      this.currentPage$$.next(currentPage - 1);
+    }
+  }
+
+  calcPageCount(): number {
+    return Math.ceil(this.favourites$$.getValue().length / this.pageSize);
+  }
+
   ngOnInit(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
       if (user) {
@@ -56,7 +96,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
   }
 
-  // LAST ITEM AND UI
   onClearFav(word: string) {
     this.databaseManipulationsService
       .deleteDictionaryWord(this.userUid, word)
