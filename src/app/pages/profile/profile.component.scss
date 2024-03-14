@@ -10,7 +10,7 @@
     grid-template-columns: repeat(4, 1fr);
     width: 100%;
     list-style: none;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     &-wrapper {
       width: 100%;
     }
@@ -40,6 +40,23 @@
     }
 
     &-btn {
+    }
+  }
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25px;
+    gap: 10px;
+    &-text {
+      font-weight: 700;
+    }
+    &-btn {
+      background-color: #000;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
     }
   }
   &__exception {
