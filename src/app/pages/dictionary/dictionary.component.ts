@@ -27,6 +27,7 @@ import { CustomeInputComponent } from '../../shared/components/UI/custome-input/
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
 import { AuthService } from '../../core/authentication/auth.service';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-dictionary',
@@ -36,6 +37,7 @@ import { AuthService } from '../../core/authentication/auth.service';
     ReactiveFormsModule,
     CustomeInputComponent,
     CustomBtnComponent,
+    HeaderComponent,
   ],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
@@ -58,8 +60,12 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
-      this.user$$.next(user);
-      this.getDictionaryWords();
+      if (user) {
+        this.user$$.next(user);
+        this.getDictionaryWords(user.uid);
+      } else {
+        this.cleartUserData();
+      }
     });
     console.log('favourites$', this.favourites$$);
   }
@@ -78,9 +84,9 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.words$$.next([]);
   }
 
-  getDictionaryWords() {
+  getDictionaryWords(userUid: string): void {
     this.databaseManipulationService
-      .getDictionaryWords(this.user$$.getValue()?.uid)
+      .getDictionaryWords(userUid)
       .subscribe((result: string[] | null) => {
         if (result) {
           this.favourites$$.next(result);
@@ -144,6 +150,12 @@ export class DictionaryComponent implements OnInit, OnDestroy {
       .deleteFullUserDictionary(this.user$$.getValue()?.uid)
       .subscribe(() => console.log('all words deleted'));
     console.log(this.favourites$$.getValue());
+  }
+
+  cleartUserData(): void {
+    this.words$$.next([]);
+    this.favourites$$.next([]);
+    this.error$$.next(null);
   }
 
   ngOnDestroy(): void {
