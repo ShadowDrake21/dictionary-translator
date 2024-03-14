@@ -1,0 +1,22 @@
+.header {
+  position: absolute;
+  padding: 20px 0;
+  width: 100%;
+  right: 0;
+  top: 0;
+  &__inner {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 20px;
+  }
+  &__link {
+    width: 30px;
+    height: 30px;
+
+    fa-icon {
+      font-size: 30px;
+      color: #fff;
+    }
+  }
+}
