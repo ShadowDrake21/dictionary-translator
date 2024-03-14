@@ -1,5 +1,49 @@
-.profile__inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.profile {
+  &__inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    list-style: none;
+    margin-bottom: 50px;
+    &-wrapper {
+      width: 100%;
+    }
+    &-item {
+      position: relative;
+      padding: 15px 0;
+      border: 1px solid #000;
+      background-color: #ffffff;
+      &__span {
+        display: block;
+        text-align: center;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 22px;
+      }
+      &__close {
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+      }
+      &__icon {
+        font-size: 18px;
+      }
+    }
+
+    &-btn {
+    }
+  }
+  &__exception {
+    &-text {
+    }
+  }
 }
