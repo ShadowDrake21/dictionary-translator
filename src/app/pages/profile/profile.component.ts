@@ -19,6 +19,8 @@ import { AuthService } from '../../core/authentication/auth.service';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
+import { DictionaryService } from '../../core/services/dictionary.service';
+import { MutualDictionaryProfileService } from '../../core/services/mutual-dictionary-profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -35,37 +37,38 @@ import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
+  protected mutualDictionaryProfile = inject(MutualDictionaryProfileService);
   private databaseManipulationsService = inject(DatabaseManipulationsService);
   private router = inject(Router);
 
   faClose = faClose;
 
-  userUid: string | undefined = undefined;
+  // userUid: string | undefined = undefined;
 
-  user$$ = new BehaviorSubject<User | null>(null);
-  destroy$$ = new Subject<void>();
+  // user$$ = new BehaviorSubject<User | null>(null);
+  // destroy$$ = new Subject<void>();
 
-  favourites$$ = new BehaviorSubject<string[]>([]);
-  error$$ = new BehaviorSubject<string | null>(null);
+  // favourites$$ = new BehaviorSubject<string[]>([]);
+  // error$$ = new BehaviorSubject<string | null>(null);
 
   pageSize = 8;
   currentPage$$ = new BehaviorSubject<number>(1);
 
   ngOnInit(): void {
-    this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
-      if (user) {
-        this.userUid = user.uid;
-        this.user$$.next(user);
-        console.log(user);
-        this.getDictionaryWords();
-      } else {
-        this.cleartUserData();
-      }
-    });
+    // this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
+    //   if (user) {
+    //     this.userUid = user.uid;
+    //     this.user$$.next(user);
+    //     this.getDictionaryWords();
+    //   } else {
+    //     this.clearUserData();
+    //   }
+    // });
+    this.mutualDictionaryProfile.getUserAndPerformActions();
   }
 
   visibleFavourites$$ = combineLatest([
-    this.favourites$$,
+    this.mutualDictionaryProfile.favourites$$,
     this.currentPage$$,
   ]).pipe(
     map(([favourites, currentPage]) => {
@@ -90,27 +93,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   calcPageCount(): number {
-    return Math.ceil(this.favourites$$.getValue().length / this.pageSize);
+    return Math.ceil(
+      this.mutualDictionaryProfile.favourites$$.getValue().length /
+        this.pageSize
+    );
   }
 
-  getDictionaryWords(): void {
-    this.databaseManipulationsService
-      .getDictionaryWords(this.userUid)
-      .subscribe((result: string[] | null) => {
-        if (result) {
-          this.favourites$$.next(result);
-          console.log(this.favourites$$.getValue());
-        }
-      });
-  }
+  // getDictionaryWords(): void {
+  //   this.databaseManipulationsService
+  //     .getDictionaryWords(this.dictionaryService.userUid)
+  //     .subscribe((result: string[] | null) => {
+  //       if (result) {
+  //         this.dictionaryService.favourites$$.next(result);
+  //         this.dictionaryService.favourites$$.next(result);
+  //         console.log(this.dictionaryService.favourites$$.getValue());
+  //       }
+  //     });
+  // }
 
   onClearFav(word: string) {
     this.databaseManipulationsService
-      .deleteDictionaryWord(this.userUid, word)
+      .deleteDictionaryWord(this.mutualDictionaryProfile.userUid, word)
       .pipe(
         switchMap(() => {
           return this.databaseManipulationsService.getDictionaryWords(
-            this.userUid
+            this.mutualDictionaryProfile.userUid
           );
         }),
         tap((updatedFavourites: string[] | null) => {
@@ -118,9 +125,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
             const filteredFavourites = updatedFavourites.filter(
               (fav) => fav !== word
             );
-            this.favourites$$.next(filteredFavourites);
+            this.mutualDictionaryProfile.favourites$$.next(filteredFavourites);
           } else {
-            this.favourites$$.next([]);
+            this.mutualDictionaryProfile.favourites$$.next([]);
           }
         }),
         tap(() => {
@@ -137,21 +144,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dictionary'], { queryParams: { word } });
   }
 
-  onClearAllFavs() {
-    this.favourites$$.next([]);
-    this.databaseManipulationsService
-      .deleteFullUserDictionary(this.userUid)
-      .subscribe(() => console.log('all words deleted'));
-    console.log(this.favourites$$.getValue());
-  }
+  // onClearAllFavs() {
+  //   this.favourites$$.next([]);
+  //   this.databaseManipulationsService
+  //     .deleteFullUserDictionary(this.userUid)
+  //     .subscribe(() => console.log('all words deleted'));
+  // }
 
-  cleartUserData(): void {
-    this.favourites$$.next([]);
-    this.error$$.next(null);
-  }
+  // clearUserData(): void {
+  //   this.favourites$$.next([]);
+  //   this.error$$.next(null);
+  // }
 
   ngOnDestroy(): void {
-    this.destroy$$.next();
-    this.destroy$$.complete();
+    this.mutualDictionaryProfile.destroy$$.next();
+    this.mutualDictionaryProfile.destroy$$.complete();
   }
 }

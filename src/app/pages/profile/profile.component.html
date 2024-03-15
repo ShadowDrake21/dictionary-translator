@@ -1,7 +1,10 @@
 <app-header></app-header>
 <section class="container profile">
   <div class="inner profile__inner">
-    <div class="profile__top" *ngIf="this.user$$ | async as user">
+    <div
+      class="profile__top"
+      *ngIf="this.mutualDictionaryProfile.user$$ | async as user"
+    >
       <div class="profile__top-img__wrapper">
         <img class="profile__top-img" [src]="user.photoURL" alt="photo" />
       </div>
@@ -41,11 +44,14 @@
         </ul>
         <ui-custom-btn
           *ngIf="favourites.length; else noFavourites"
-          (click)="onClearAllFavs()"
+          (click)="mutualDictionaryProfile.onClearAllFavs()"
           text="Remove all"
           color="rgb(255, 28, 28)"
         ></ui-custom-btn>
-        <div class="profile__pagination" *ngIf="(favourites$$ | async)?.length">
+        <div
+          class="profile__pagination"
+          *ngIf="(mutualDictionaryProfile.favourites$$ | async)?.length"
+        >
           <button
             class="profile__pagination-btn"
             type="button"
