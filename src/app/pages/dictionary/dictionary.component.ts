@@ -8,12 +8,15 @@ import {
 } from '@angular/forms';
 import {
   BehaviorSubject,
+  Observable,
   Subject,
+  Subscription,
   catchError,
   debounceTime,
   distinct,
   distinctUntilChanged,
   map,
+  startWith,
   switchMap,
   take,
   takeUntil,
@@ -27,6 +30,8 @@ import { CustomeInputComponent } from '../../shared/components/UI/custome-input/
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
 import { AuthService } from '../../core/authentication/auth.service';
+import { HeaderComponent } from '../../shared/components/header/header.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dictionary',
@@ -36,6 +41,7 @@ import { AuthService } from '../../core/authentication/auth.service';
     ReactiveFormsModule,
     CustomeInputComponent,
     CustomBtnComponent,
+    HeaderComponent,
   ],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
@@ -43,7 +49,9 @@ import { AuthService } from '../../core/authentication/auth.service';
 export class DictionaryComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private dictionaryService = inject(DictionaryService);
-  private databaseManipulationService = inject(DatabaseManipulationsService);
+  private databaseManipulationsService = inject(DatabaseManipulationsService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
   dictionaryForm = new FormGroup({
     word: new FormControl('', Validators.required),
@@ -56,12 +64,41 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   favourites$$ = new BehaviorSubject<string[]>([]);
   error$$ = new BehaviorSubject<string | null>(null);
 
+  isFavourite$: Observable<boolean> | null = null;
+
   ngOnInit(): void {
+    this.getQueryParams();
     this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
-      this.user$$.next(user);
-      this.getDictionaryWords();
+      if (user) {
+        this.user$$.next(user);
+        this.getDictionaryWords(user.uid);
+      } else {
+        this.cleartUserData();
+      }
     });
     console.log('favourites$', this.favourites$$);
+  }
+
+  getQueryParams() {
+    this.activatedRoute.queryParams.subscribe((word: object) => {
+      if (word && Object.keys(word).length > 0) {
+        const queryValue = Object.values(word).toString();
+        this.dictionaryForm.controls.word.setValue(queryValue);
+        this.fetchWordData();
+        this.clearQueryParams();
+      } else {
+        console.log('No query parameters found.');
+      }
+    });
+  }
+
+  clearQueryParams() {
+    this.router.navigate([], {
+      queryParams: {
+        word: null,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onInputChange(value: string) {
@@ -78,9 +115,9 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.words$$.next([]);
   }
 
-  getDictionaryWords() {
-    this.databaseManipulationService
-      .getDictionaryWords(this.user$$.getValue()?.uid)
+  getDictionaryWords(userUid: string): void {
+    this.databaseManipulationsService
+      .getDictionaryWords(userUid)
       .subscribe((result: string[] | null) => {
         if (result) {
           this.favourites$$.next(result);
@@ -93,6 +130,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.dictionaryForm
       .get('word')!
       .valueChanges.pipe(
+        startWith(this.dictionaryForm.get('word')!.value),
         debounceTime(700),
         distinctUntilChanged(),
         switchMap((searchTerm: string | null) => {
@@ -111,7 +149,11 @@ export class DictionaryComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(
-        (words: IDictionaryWord[]) => this.words$$.next([...words]),
+        (words: IDictionaryWord[]) => {
+          this.words$$.next([...words]);
+          const wordArr = this.words$$.getValue();
+          this.isFavourite$ = this.markBtnFavAsHidden(wordArr[0]);
+        },
         () => console.log('Completed')
       );
   }
@@ -126,7 +168,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
             ...new Set([...this.favourites$$.getValue(), ...wordNames]),
           ];
           this.favourites$$.next(uniqueWords);
-          this.databaseManipulationService
+          this.databaseManipulationsService
             .writeDictionaryWord(this.user$$.getValue()?.uid, wordNames[0])
             .subscribe(() => {
               console.log('word added');
@@ -138,12 +180,32 @@ export class DictionaryComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  onClearFavs() {
+  onClearAllFavs() {
     this.favourites$$.next([]);
-    this.databaseManipulationService
+    this.databaseManipulationsService
       .deleteFullUserDictionary(this.user$$.getValue()?.uid)
       .subscribe(() => console.log('all words deleted'));
     console.log(this.favourites$$.getValue());
+  }
+
+  cleartUserData(): void {
+    this.words$$.next([]);
+    this.favourites$$.next([]);
+    this.error$$.next(null);
+  }
+
+  markBtnFavAsHidden(
+    wordEl: IDictionaryWord | null
+  ): Observable<boolean> | null {
+    if (!wordEl) return null;
+    const { word } = wordEl;
+
+    return this.favourites$$.pipe(
+      map((favourites) => {
+        console.log('markBtnFavAsHidden', favourites.includes(word));
+        return favourites.includes(word);
+      })
+    );
   }
 
   ngOnDestroy(): void {

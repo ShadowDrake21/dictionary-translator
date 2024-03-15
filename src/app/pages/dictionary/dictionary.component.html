@@ -1,4 +1,5 @@
-<section class="section container">
+<app-header></app-header>
+<section class="section dictionary container">
   <div class="inner dictionary__inner">
     <form
       [formGroup]="dictionaryForm"
@@ -17,15 +18,8 @@
         class="dictionary__reset-wrapper"
         *ngIf="(favourites$$ | async)?.length"
       >
-        <!-- <button
-          class="dictionary__reset-button"
-          type="button"
-          (click)="onClearFavs()"
-        >
-          Clear a favourites
-        </button> -->
         <ui-custom-btn
-          (click)="onClearFavs()"
+          (click)="onClearAllFavs()"
           text="Clear a favourites"
           color="#008060"
           width="50%"
@@ -39,22 +33,33 @@
     >
       @if(!data.error) {
       <ng-container *ngIf="data.words?.length; else emptyResult">
-        <div *ngFor="let word of data.words">
-          <h2 style="display: block">
+        <div *ngFor="let word of data.words" class="dictionary__list-wrapper">
+          <h2 style="display: block" class="dictionary__list-title">
             {{ word.word }}
           </h2>
-          <ul>
-            <li *ngFor="let meaning of word.meanings">
-              <h4>
-                Part of speech: <span>{{ meaning.partOfSpeech }}</span>
+          <ul class="dictionary__list">
+            <li
+              *ngFor="let meaning of word.meanings"
+              class="dictionary__list-item"
+            >
+              <h4 class="dictionary__list-item__desc">
+                Part of speech:
+                <span class="dictionary__list-item__span">{{
+                  meaning.partOfSpeech
+                }}</span>
               </h4>
-              <ng-container *ngFor="let definition of meaning.definitions">{{
-                definition.definition
-              }}</ng-container>
+              <ul class="dictionary__list-item__defs">
+                <ng-container *ngFor="let definition of meaning.definitions"
+                  ><li class="dictionary__list-item__def">
+                    {{ definition.definition }}
+                  </li></ng-container
+                >
+              </ul>
             </li>
           </ul>
         </div>
         <ui-custom-btn
+          *ngIf="!(isFavourite$ | async)"
           (onClick)="onAddToFavs()"
           text="Add to Favourites"
         ></ui-custom-btn>
