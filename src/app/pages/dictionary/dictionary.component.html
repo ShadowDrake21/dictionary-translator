@@ -49,6 +49,7 @@
           </ul>
         </div>
         <ui-custom-btn
+          *ngIf="!(isFavourite$ | async)"
           (onClick)="onAddToFavs()"
           text="Add to Favourites"
         ></ui-custom-btn>

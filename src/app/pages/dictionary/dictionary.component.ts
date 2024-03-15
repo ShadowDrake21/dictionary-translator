@@ -8,7 +8,9 @@ import {
 } from '@angular/forms';
 import {
   BehaviorSubject,
+  Observable,
   Subject,
+  Subscription,
   catchError,
   debounceTime,
   distinct,
@@ -61,6 +63,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   words$$ = new BehaviorSubject<IDictionaryWord[]>([]);
   favourites$$ = new BehaviorSubject<string[]>([]);
   error$$ = new BehaviorSubject<string | null>(null);
+
+  isFavourite$: Observable<boolean> | null = null;
 
   ngOnInit(): void {
     this.getQueryParams();
@@ -145,7 +149,11 @@ export class DictionaryComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(
-        (words: IDictionaryWord[]) => this.words$$.next([...words]),
+        (words: IDictionaryWord[]) => {
+          this.words$$.next([...words]);
+          const wordArr = this.words$$.getValue();
+          this.isFavourite$ = this.markBtnFavAsHidden(wordArr[0]);
+        },
         () => console.log('Completed')
       );
   }
@@ -184,6 +192,20 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.words$$.next([]);
     this.favourites$$.next([]);
     this.error$$.next(null);
+  }
+
+  markBtnFavAsHidden(
+    wordEl: IDictionaryWord | null
+  ): Observable<boolean> | null {
+    if (!wordEl) return null;
+    const { word } = wordEl;
+
+    return this.favourites$$.pipe(
+      map((favourites) => {
+        console.log('markBtnFavAsHidden', favourites.includes(word));
+        return favourites.includes(word);
+      })
+    );
   }
 
   ngOnDestroy(): void {
