@@ -14,6 +14,7 @@ import {
   distinct,
   distinctUntilChanged,
   map,
+  startWith,
   switchMap,
   take,
   takeUntil,
@@ -28,6 +29,7 @@ import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
 import { AuthService } from '../../core/authentication/auth.service';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dictionary',
@@ -46,6 +48,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private dictionaryService = inject(DictionaryService);
   private databaseManipulationsService = inject(DatabaseManipulationsService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
   dictionaryForm = new FormGroup({
     word: new FormControl('', Validators.required),
@@ -59,6 +63,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   error$$ = new BehaviorSubject<string | null>(null);
 
   ngOnInit(): void {
+    this.getQueryParams();
     this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
       if (user) {
         this.user$$.next(user);
@@ -68,6 +73,28 @@ export class DictionaryComponent implements OnInit, OnDestroy {
       }
     });
     console.log('favourites$', this.favourites$$);
+  }
+
+  getQueryParams() {
+    this.activatedRoute.queryParams.subscribe((word: object) => {
+      if (word && Object.keys(word).length > 0) {
+        const queryValue = Object.values(word).toString();
+        this.dictionaryForm.controls.word.setValue(queryValue);
+        this.fetchWordData();
+        this.clearQueryParams();
+      } else {
+        console.log('No query parameters found.');
+      }
+    });
+  }
+
+  clearQueryParams() {
+    this.router.navigate([], {
+      queryParams: {
+        word: null,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onInputChange(value: string) {
@@ -99,6 +126,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.dictionaryForm
       .get('word')!
       .valueChanges.pipe(
+        startWith(this.dictionaryForm.get('word')!.value),
         debounceTime(700),
         distinctUntilChanged(),
         switchMap((searchTerm: string | null) => {
