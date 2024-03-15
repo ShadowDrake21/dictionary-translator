@@ -1,61 +1,76 @@
 <app-header></app-header>
 <section class="container profile">
   <div class="inner profile__inner">
-    <div
-      *ngIf="visibleFavourites$$ | async as favourites"
-      class="profile__list-wrapper"
-    >
-      <h2 class="profile__list-title">Your list of favourite words</h2>
-      <ul class="profile__list">
-        <li
-          *ngFor="let fav of favourites"
-          class="profile__list-item"
-          (dblclick)="onNavigateByWord(fav)"
-        >
-          <span class="profile__list-item__span">{{ fav }}</span>
-          <button
-            class="profile__list-item__close"
-            type="button"
-            (click)="onClearFav(fav)"
-          >
-            <fa-icon
-              [icon]="faClose"
-              class="profile__list-item__icon"
-            ></fa-icon>
-          </button>
-        </li>
-      </ul>
-      <ui-custom-btn
-        *ngIf="favourites.length; else noFavourites"
-        (click)="onClearAllFavs()"
-        text="Remove all"
-        color="rgb(255, 28, 28)"
-      ></ui-custom-btn>
-      <div class="profile__pagination" *ngIf="(favourites$$ | async)?.length">
-        <button
-          class="profile__pagination-btn"
-          type="button"
-          (click)="prevPage()"
-          [disabled]="(currentPage$$ | async) === 1"
-        >
-          Previous
-        </button>
-        <p class="profile__pagination-text">
-          Page {{ currentPage$$ | async }} of {{ calcPageCount() }}
-        </p>
-        <button
-          class="profile__pagination-btn"
-          type="button"
-          (click)="nextPage()"
-          [disabled]="(currentPage$$ | async) === calcPageCount()"
-        >
-          Next
-        </button>
+    <div class="profile__top" *ngIf="this.user$$ | async as user">
+      <div class="profile__top-img__wrapper">
+        <img class="profile__top-img" [src]="user.photoURL" alt="photo" />
+      </div>
+      <div class="profile__top-info">
+        <h1 class="profile__top-info__email">
+          {{ user.email ?? "" | truncateText : 25 }}
+        </h1>
+        <h2 class="profile__top-info__name">
+          {{ user.displayName ?? "" | truncateText : 25 }}
+        </h2>
       </div>
     </div>
+    <div class="profile__bottom">
+      <div
+        *ngIf="visibleFavourites$$ | async as favourites"
+        class="profile__list-wrapper"
+      >
+        <h2 class="profile__list-title">Your list of favourite words</h2>
+        <ul class="profile__list">
+          <li
+            *ngFor="let fav of favourites"
+            class="profile__list-item"
+            (dblclick)="onNavigateByWord(fav)"
+          >
+            <span class="profile__list-item__span">{{ fav }}</span>
+            <button
+              class="profile__list-item__close"
+              type="button"
+              (click)="onClearFav(fav)"
+            >
+              <fa-icon
+                [icon]="faClose"
+                class="profile__list-item__icon"
+              ></fa-icon>
+            </button>
+          </li>
+        </ul>
+        <ui-custom-btn
+          *ngIf="favourites.length; else noFavourites"
+          (click)="onClearAllFavs()"
+          text="Remove all"
+          color="rgb(255, 28, 28)"
+        ></ui-custom-btn>
+        <div class="profile__pagination" *ngIf="(favourites$$ | async)?.length">
+          <button
+            class="profile__pagination-btn"
+            type="button"
+            (click)="prevPage()"
+            [disabled]="(currentPage$$ | async) === 1"
+          >
+            Previous
+          </button>
+          <p class="profile__pagination-text">
+            Page {{ currentPage$$ | async }} of {{ calcPageCount() }}
+          </p>
+          <button
+            class="profile__pagination-btn"
+            type="button"
+            (click)="nextPage()"
+            [disabled]="(currentPage$$ | async) === calcPageCount()"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
-    <ng-template class="profile__exception" #noFavourites>
-      <p class="profile__exception-text">You didn't highlight any word</p>
-    </ng-template>
+      <ng-template class="profile__exception" #noFavourites>
+        <p class="profile__exception-text">You didn't highlight any word</p>
+      </ng-template>
+    </div>
   </div>
 </section>

@@ -3,6 +3,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 25px;
+    width: 100%;
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    &-img {
+      height: 300px;
+      &__wrapper {
+      }
+    }
+    &-info {
+      &__email {
+        font-size: 40px;
+        line-height: 46px;
+      }
+      &__name {
+        font-size: 30px;
+        line-height: 36px;
+      }
+    }
+  }
+  &__bottom {
     width: 100%;
   }
   &__list {
@@ -73,6 +98,10 @@
   }
   &__exception {
     &-text {
+      text-align: center;
+      font-size: 24px;
+      line-height: 28px;
+      font-weight: 700;
     }
   }
 }

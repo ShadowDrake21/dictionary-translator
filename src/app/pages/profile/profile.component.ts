@@ -18,11 +18,18 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { AuthService } from '../../core/authentication/auth.service';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
+import { TruncateTextPipe } from '../../shared/pipes/truncate-text.pipe';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FaIconComponent, CustomBtnComponent],
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    FaIconComponent,
+    CustomBtnComponent,
+    TruncateTextPipe,
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
@@ -43,6 +50,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   pageSize = 8;
   currentPage$$ = new BehaviorSubject<number>(1);
+
+  ngOnInit(): void {
+    this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
+      if (user) {
+        this.userUid = user.uid;
+        this.user$$.next(user);
+        console.log(user);
+        this.getDictionaryWords();
+      } else {
+        this.cleartUserData();
+      }
+    });
+  }
 
   visibleFavourites$$ = combineLatest([
     this.favourites$$,
@@ -71,18 +91,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   calcPageCount(): number {
     return Math.ceil(this.favourites$$.getValue().length / this.pageSize);
-  }
-
-  ngOnInit(): void {
-    this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
-      if (user) {
-        this.userUid = user.uid;
-        this.user$$.next(user);
-        this.getDictionaryWords();
-      } else {
-        this.cleartUserData();
-      }
-    });
   }
 
   getDictionaryWords(): void {
