@@ -1,1 +1,21 @@
-<p>page-not-found works!</p>
+<section class="section page-not-found container">
+  <div class="inner page-not-found__inner">
+    <div class="page-not-found__info">
+      <h1 class="page-not-found__info-title">
+        {{ "404 This page is not found" | uppercase }}
+      </h1>
+      <div class="page-not-found__links">
+        <ng-container *ngIf="user$$ | async; else signInLink"
+          ><a routerLink="/dictionary" class="page-not-found__link"
+            >Go to Dictionary page</a
+          ></ng-container
+        >
+        <ng-template #signInLink
+          ><a routerLink="/sign-in" class="page-not-found__link"
+            >Go to Sign-In page</a
+          ></ng-template
+        >
+      </div>
+    </div>
+  </div>
+</section>

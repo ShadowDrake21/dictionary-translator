@@ -1,0 +1,26 @@
+.page-not-found {
+  &__inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__info {
+    &-title {
+      font-size: 46px;
+      line-height: 50px;
+    }
+  }
+  &__links {
+    padding-top: 50px;
+    text-align: center;
+  }
+  &__link {
+    font-size: 22px;
+    line-height: 26px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
