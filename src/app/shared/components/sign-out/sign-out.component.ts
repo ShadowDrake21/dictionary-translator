@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../../core/authentication/auth.service';
 import { CommonModule } from '@angular/common';
-import { CustomBtnComponent } from '../UI/custom-btn/custom-btn.component';
 import { Router } from '@angular/router';
+
+import { AuthService } from '../../../core/authentication/auth.service';
+import { CustomBtnComponent } from '../UI/custom-btn/custom-btn.component';
 
 @Component({
   selector: 'auth-sign-out',

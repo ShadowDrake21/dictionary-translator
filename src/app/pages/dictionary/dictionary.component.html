@@ -16,10 +16,10 @@
       ></ui-custome-input>
       <div
         class="dictionary__reset-wrapper"
-        *ngIf="(favourites$$ | async)?.length"
+        *ngIf="(this.mutualDictionaryProfile.favourites$$ | async)?.length"
       >
         <ui-custom-btn
-          (click)="onClearAllFavs()"
+          (click)="mutualDictionaryProfile.onClearAllFavs()"
           text="Clear a favourites"
           color="#008060"
           width="50%"
@@ -30,7 +30,10 @@
     <!-- REFACTORING!!!!!!!!!!!! -->
     <div
       class="dictionary__results dictionary__part"
-      *ngIf="{ words: words$$ | async, error: error$$ | async } as data"
+      *ngIf="{
+        words: mutualDictionaryProfile.words$$ | async,
+        error: mutualDictionaryProfile.error$$ | async
+      } as data"
     >
       @if(!data.error) {
       <ng-container *ngIf="data.words?.length; else emptyResult">
