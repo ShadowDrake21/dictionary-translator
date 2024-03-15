@@ -5,6 +5,7 @@
       *ngIf="visibleFavourites$$ | async as favourites"
       class="profile__list-wrapper"
     >
+      <h2 class="profile__list-title">Your list of favourite words</h2>
       <ul class="profile__list">
         <li
           *ngFor="let fav of favourites"
@@ -30,11 +31,12 @@
         text="Remove all"
         color="rgb(255, 28, 28)"
       ></ui-custom-btn>
-      <div class="profile__pagination" *ngIf="favourites.length">
+      <div class="profile__pagination" *ngIf="(favourites$$ | async)?.length">
         <button
           class="profile__pagination-btn"
           type="button"
           (click)="prevPage()"
+          [disabled]="(currentPage$$ | async) === 1"
         >
           Previous
         </button>
@@ -45,6 +47,7 @@
           class="profile__pagination-btn"
           type="button"
           (click)="nextPage()"
+          [disabled]="(currentPage$$ | async) === calcPageCount()"
         >
           Next
         </button>

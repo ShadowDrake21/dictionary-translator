@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   favourites$$ = new BehaviorSubject<string[]>([]);
   error$$ = new BehaviorSubject<string | null>(null);
 
-  pageSize = 4;
+  pageSize = 8;
   currentPage$$ = new BehaviorSubject<number>(1);
 
   visibleFavourites$$ = combineLatest([
@@ -114,6 +114,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
           } else {
             this.favourites$$.next([]);
           }
+        }),
+        tap(() => {
+          this.currentPage$$.next(1);
         })
       )
       .subscribe(() => {
@@ -123,7 +126,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   onNavigateByWord(word: string) {
     console.log('onNavigateByWord', word);
-    this.router.navigateByUrl('/dictionary');
+    this.router.navigate(['/dictionary'], { queryParams: { word } });
   }
 
   onClearAllFavs() {
