@@ -41,13 +41,10 @@ export class SignInComponent implements OnInit {
   signIn() {
     this.authService.googleSignIn().subscribe(
       (signInResult: ISignIn | null) => {
-        console.log('successful sign-in');
         this.signInData = signInResult;
-        console.log('signInData', this.signInData);
         this.router.navigateByUrl('/dictionary');
       },
       (error: FirebaseError) => {
-        console.error('Error during sign-in');
         this.signInError = error;
       }
     );
