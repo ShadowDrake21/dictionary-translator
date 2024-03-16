@@ -96,11 +96,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         console.log(`word ${word} deleted`);
+        this.mutualDictionaryProfile.message$$.next({
+          type: 'delete',
+          text: `word "${word}" deleted`,
+        });
+        setTimeout(() => {
+          this.mutualDictionaryProfile.message$$.next(null);
+        }, 3000);
       });
   }
 
   onNavigateByWord(word: string) {
-    console.log('onNavigateByWord', word);
     this.router.navigate(['/dictionary'], { queryParams: { word } });
   }
 

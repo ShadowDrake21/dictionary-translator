@@ -26,6 +26,11 @@
           >Clear a favourites</ui-custom-btn
         >
       </div>
+      <div *ngIf="mutualDictionaryProfile.message$$ | async as message">
+        <ng-container *ngIf="message.type === 'delete'">
+          <p class="message">{{ message.text | uppercase }}</p></ng-container
+        >
+      </div>
     </form>
     <div
       class="dictionary__results dictionary__part"
@@ -36,9 +41,11 @@
     >
       @if(!data.error) {
       <div>
-        <p *ngIf="message$$ | async as message" class="dictionary__message">
-          {{ message | uppercase }}
-        </p>
+        <div *ngIf="mutualDictionaryProfile.message$$ | async as message">
+          <ng-container *ngIf="message.type === 'add'">
+            <p class="message">{{ message.text | uppercase }}</p></ng-container
+          >
+        </div>
       </div>
       <ng-container *ngIf="data.words?.length; else emptyResult">
         <div *ngFor="let word of data.words" class="dictionary__list-wrapper">
