@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { AuthService } from '../../core/authentication/auth.service';
-import { User, getAuth } from '@firebase/auth';
-import { ISignIn } from '../../shared/models/auth.model';
+import { User } from '@firebase/auth';
 import { FirebaseError } from 'firebase/app';
-import { delay } from 'rxjs';
-import { SignOutComponent } from '../../shared/components/sign-out/sign-out.component';
 import { Router } from '@angular/router';
+
+import { AuthService } from '../../core/authentication/auth.service';
+import { ISignIn } from '../../shared/models/auth.model';
+import { SignOutComponent } from '../../shared/components/sign-out/sign-out.component';
 import { GoogleBtnComponent } from './components/google-btn/google-btn.component';
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 
@@ -41,13 +41,10 @@ export class SignInComponent implements OnInit {
   signIn() {
     this.authService.googleSignIn().subscribe(
       (signInResult: ISignIn | null) => {
-        console.log('successful sign-in');
         this.signInData = signInResult;
-        console.log('signInData', this.signInData);
         this.router.navigateByUrl('/dictionary');
       },
       (error: FirebaseError) => {
-        console.error('Error during sign-in');
         this.signInError = error;
       }
     );

@@ -16,23 +16,37 @@
       ></ui-custome-input>
       <div
         class="dictionary__reset-wrapper"
-        *ngIf="(favourites$$ | async)?.length"
+        *ngIf="(this.mutualDictionaryProfile.favourites$$ | async)?.length"
       >
         <ui-custom-btn
-          (click)="onClearAllFavs()"
+          (click)="mutualDictionaryProfile.onClearAllFavs()"
           text="Clear a favourites"
           color="#008060"
           width="50%"
           >Clear a favourites</ui-custom-btn
         >
       </div>
+      <div *ngIf="mutualDictionaryProfile.message$$ | async as message">
+        <ng-container *ngIf="message.type === 'delete'">
+          <p class="message">{{ message.text | uppercase }}</p></ng-container
+        >
+      </div>
     </form>
-    <!-- REFACTORING!!!!!!!!!!!! -->
     <div
       class="dictionary__results dictionary__part"
-      *ngIf="{ words: words$$ | async, error: error$$ | async } as data"
+      *ngIf="{
+        words: mutualDictionaryProfile.words$$ | async,
+        error: mutualDictionaryProfile.error$$ | async
+      } as data"
     >
       @if(!data.error) {
+      <div>
+        <div *ngIf="mutualDictionaryProfile.message$$ | async as message">
+          <ng-container *ngIf="message.type === 'add'">
+            <p class="message">{{ message.text | uppercase }}</p></ng-container
+          >
+        </div>
+      </div>
       <ng-container *ngIf="data.words?.length; else emptyResult">
         <div *ngFor="let word of data.words" class="dictionary__list-wrapper">
           <h2 style="display: block" class="dictionary__list-title">
@@ -65,7 +79,6 @@
           text="Add to Favourites"
         ></ui-custom-btn>
       </ng-container>
-
       } @else {
       <p class="error dictionary__special">{{ data.error }}</p>
       }

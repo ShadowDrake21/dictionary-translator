@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { SignInComponent } from './pages/sign-in/sign-in.component';
 import { DictionaryComponent } from './pages/dictionary/dictionary.component';
+import { secureInnerPagesGuard } from './core/guards/secure-inner-pages.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/sign-in' },
@@ -16,6 +17,7 @@ export const routes: Routes = [
     //   import('./pages/translate/translate.component').then(
     //     (m) => m.TranslateComponent
     //   ),
+    canActivate: [secureInnerPagesGuard],
   },
   {
     path: 'profile',
@@ -23,6 +25,7 @@ export const routes: Routes = [
       import('./pages/profile/profile.component').then(
         (m) => m.ProfileComponent
       ),
+    canActivate: [secureInnerPagesGuard],
   },
   { path: '**', component: PageNotFoundComponent },
 ];

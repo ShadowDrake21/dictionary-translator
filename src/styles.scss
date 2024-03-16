@@ -1,7 +1,7 @@
 :root {
   --accent-1: #a682ff;
   --accent-2: #5887ff;
-  --error: red;
+  --accent-3: red;
 }
 
 html {
@@ -69,8 +69,16 @@ ul {
 }
 
 .error__wrapper {
-  background-color: var(--error);
+  background-color: var(--accent-3);
   padding: 10px;
   font-weight: 600;
   border-radius: 10px;
+}
+
+.message {
+  text-align: center;
+  color: var(--accent-3);
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
 }

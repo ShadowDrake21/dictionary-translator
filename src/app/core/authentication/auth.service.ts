@@ -4,12 +4,10 @@ import {
   User,
   UserCredential,
   getAdditionalUserInfo,
-  getAuth,
   onAuthStateChanged,
   signInWithPopup,
 } from '@firebase/auth';
 import { FirebaseError } from 'firebase/app';
-import { ISignIn } from '../../shared/models/auth.model';
 import {
   BehaviorSubject,
   Observable,
@@ -18,6 +16,8 @@ import {
   map,
   throwError,
 } from 'rxjs';
+
+import { ISignIn } from '../../shared/models/auth.model';
 
 @Injectable({
   providedIn: 'root',
