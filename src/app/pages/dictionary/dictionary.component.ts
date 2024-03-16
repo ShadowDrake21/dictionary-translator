@@ -9,28 +9,30 @@ import {
 import {
   BehaviorSubject,
   Observable,
-  Subject,
   catchError,
   debounceTime,
+  delay,
   distinct,
   distinctUntilChanged,
+  finalize,
   map,
+  of,
   startWith,
   switchMap,
   take,
   takeUntil,
   tap,
+  timer,
 } from 'rxjs';
-import { User } from '@firebase/auth';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { IDictionaryWord } from '../../shared/models/dictionaty.model';
 import { DictionaryService } from '../../core/services/dictionary.service';
 import { CustomeInputComponent } from '../../shared/components/UI/custome-input/custome-input.component';
 import { CustomBtnComponent } from '../../shared/components/UI/custom-btn/custom-btn.component';
 import { DatabaseManipulationsService } from '../../core/services/database-manipulations.service';
-import { AuthService } from '../../core/authentication/auth.service';
 import { HeaderComponent } from '../../shared/components/header/header.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MutualDictionaryProfileService } from '../../core/services/mutual-dictionary-profile.service';
 
 @Component({
   selector: 'app-dictionary',
@@ -42,12 +44,13 @@ import { ActivatedRoute, Router } from '@angular/router';
     CustomBtnComponent,
     HeaderComponent,
   ],
+  providers: [MutualDictionaryProfileService],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
 })
 export class DictionaryComponent implements OnInit, OnDestroy {
-  private authService = inject(AuthService);
-  private dictionaryService = inject(DictionaryService);
+  protected dictionaryService = inject(DictionaryService);
+  protected mutualDictionaryProfile = inject(MutualDictionaryProfileService);
   private databaseManipulationsService = inject(DatabaseManipulationsService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
@@ -56,39 +59,27 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     word: new FormControl('', Validators.required),
   });
 
-  user$$ = new BehaviorSubject<User | null>(null);
-  destroy$$ = new Subject<void>();
-
-  words$$ = new BehaviorSubject<IDictionaryWord[]>([]);
-  favourites$$ = new BehaviorSubject<string[]>([]);
-  error$$ = new BehaviorSubject<string | null>(null);
-
   isFavourite$: Observable<boolean> | null = null;
 
   ngOnInit(): void {
     this.getQueryParams();
-    this.authService.user$.pipe(takeUntil(this.destroy$$)).subscribe((user) => {
-      if (user) {
-        this.user$$.next(user);
-        this.getDictionaryWords(user.uid);
-      } else {
-        this.cleartUserData();
-      }
-    });
-    console.log('favourites$', this.favourites$$);
+    this.mutualDictionaryProfile.getUserAndPerformActions();
   }
 
   getQueryParams() {
-    this.activatedRoute.queryParams.subscribe((word: object) => {
-      if (word && Object.keys(word).length > 0) {
-        const queryValue = Object.values(word).toString();
-        this.dictionaryForm.controls.word.setValue(queryValue);
-        this.fetchWordData();
-        this.clearQueryParams();
-      } else {
-        console.log('No query parameters found.');
-      }
-    });
+    this.activatedRoute.queryParams
+      .pipe(
+        takeUntil(this.mutualDictionaryProfile.destroy$$),
+        tap(() => this.mutualDictionaryProfile.words$$.next([]))
+      )
+      .subscribe((word: object) => {
+        if (word && Object.keys(word).length > 0) {
+          const queryValue = Object.values(word).toString();
+          this.dictionaryForm.controls.word.setValue(queryValue);
+          this.fetchWordData();
+          this.clearQueryParams();
+        }
+      });
   }
 
   clearQueryParams() {
@@ -105,24 +96,13 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   onInput() {
-    this.error$$.next(null);
+    this.mutualDictionaryProfile.error$$.next(null);
     if (this.dictionaryForm.value.word) {
       this.fetchWordData();
       return;
     }
 
-    this.words$$.next([]);
-  }
-
-  getDictionaryWords(userUid: string): void {
-    this.databaseManipulationsService
-      .getDictionaryWords(userUid)
-      .subscribe((result: string[] | null) => {
-        if (result) {
-          this.favourites$$.next(result);
-          console.log(this.favourites$$.getValue());
-        }
-      });
+    this.mutualDictionaryProfile.words$$.next([]);
   }
 
   fetchWordData() {
@@ -136,7 +116,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
           if (searchTerm) {
             return this.dictionaryService.getWords(searchTerm || '').pipe(
               catchError((error) => {
-                this.error$$.next(
+                this.mutualDictionaryProfile.error$$.next(
                   `Sorry pal, there is no such word. More about an error: ${error.message}`
                 );
                 return [];
@@ -149,8 +129,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (words: IDictionaryWord[]) => {
-          this.words$$.next([...words]);
-          const wordArr = this.words$$.getValue();
+          this.mutualDictionaryProfile.words$$.next([...words]);
+          const wordArr = this.mutualDictionaryProfile.words$$.getValue();
           this.isFavourite$ = this.markBtnFavAsHidden(wordArr[0]);
         },
         () => console.log('Completed')
@@ -158,39 +138,36 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   onAddToFavs() {
-    this.words$$
+    this.mutualDictionaryProfile.words$$
       .pipe(
         map((words) => words.map((word) => word.word)),
         distinct(),
         tap((wordNames) => {
           const uniqueWords = [
-            ...new Set([...this.favourites$$.getValue(), ...wordNames]),
+            ...new Set([
+              ...this.mutualDictionaryProfile.favourites$$.getValue(),
+              ...wordNames,
+            ]),
           ];
-          this.favourites$$.next(uniqueWords);
+          this.mutualDictionaryProfile.favourites$$.next(uniqueWords);
           this.databaseManipulationsService
-            .writeDictionaryWord(this.user$$.getValue()?.uid, wordNames[0])
+            .writeDictionaryWord(
+              this.mutualDictionaryProfile.user$$.getValue()?.uid,
+              wordNames[0]
+            )
             .subscribe(() => {
-              console.log('word added');
+              this.mutualDictionaryProfile.message$$.next({
+                type: 'add',
+                text: 'word added',
+              });
+              setTimeout(() => {
+                this.mutualDictionaryProfile.message$$.next(null);
+              }, 3000);
             });
-          console.log(this.favourites$$.getValue());
         }),
         take(1)
       )
       .subscribe();
-  }
-
-  onClearAllFavs() {
-    this.favourites$$.next([]);
-    this.databaseManipulationsService
-      .deleteFullUserDictionary(this.user$$.getValue()?.uid)
-      .subscribe(() => console.log('all words deleted'));
-    console.log(this.favourites$$.getValue());
-  }
-
-  cleartUserData(): void {
-    this.words$$.next([]);
-    this.favourites$$.next([]);
-    this.error$$.next(null);
   }
 
   markBtnFavAsHidden(
@@ -199,16 +176,17 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     if (!wordEl) return null;
     const { word } = wordEl;
 
-    return this.favourites$$.pipe(
+    return this.mutualDictionaryProfile.favourites$$.pipe(
       map((favourites) => {
-        console.log('markBtnFavAsHidden', favourites.includes(word));
         return favourites.includes(word);
       })
     );
   }
 
   ngOnDestroy(): void {
-    this.destroy$$.next();
-    this.destroy$$.complete();
+    this.mutualDictionaryProfile.message$$.unsubscribe();
+    this.mutualDictionaryProfile.favourites$$.unsubscribe();
+    this.mutualDictionaryProfile.destroy$$.next();
+    this.mutualDictionaryProfile.destroy$$.complete();
   }
 }
