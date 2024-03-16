@@ -27,7 +27,6 @@
         >
       </div>
     </form>
-    <!-- REFACTORING!!!!!!!!!!!! -->
     <div
       class="dictionary__results dictionary__part"
       *ngIf="{
@@ -36,6 +35,11 @@
       } as data"
     >
       @if(!data.error) {
+      <div>
+        <p *ngIf="message$$ | async as message" class="dictionary__message">
+          {{ message | uppercase }}
+        </p>
+      </div>
       <ng-container *ngIf="data.words?.length; else emptyResult">
         <div *ngFor="let word of data.words" class="dictionary__list-wrapper">
           <h2 style="display: block" class="dictionary__list-title">
@@ -68,7 +72,6 @@
           text="Add to Favourites"
         ></ui-custom-btn>
       </ng-container>
-
       } @else {
       <p class="error dictionary__special">{{ data.error }}</p>
       }

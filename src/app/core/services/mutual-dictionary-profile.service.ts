@@ -5,9 +5,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IDictionaryWord } from '../../shared/models/dictionaty.model';
 import { User } from '@firebase/auth';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MutualDictionaryProfileService {
   private authService = inject(AuthService);
   private databaseManipulationsService = inject(DatabaseManipulationsService);
