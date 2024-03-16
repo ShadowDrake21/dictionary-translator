@@ -4,7 +4,6 @@ import {
   User,
   UserCredential,
   getAdditionalUserInfo,
-  getAuth,
   onAuthStateChanged,
   signInWithPopup,
 } from '@firebase/auth';

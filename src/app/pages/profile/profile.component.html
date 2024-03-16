@@ -72,6 +72,12 @@
             Next
           </button>
         </div>
+        <p
+          *ngIf="mutualDictionaryProfile.message$$ | async as message"
+          class="message"
+        >
+          {{ message.text | uppercase }}
+        </p>
       </div>
 
       <ng-template class="profile__exception" #noFavourites>

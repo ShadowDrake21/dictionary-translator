@@ -59,9 +59,6 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     word: new FormControl('', Validators.required),
   });
 
-  message$$: BehaviorSubject<string | null> = new BehaviorSubject<
-    string | null
-  >(null);
   isFavourite$: Observable<boolean> | null = null;
 
   ngOnInit(): void {
@@ -159,10 +156,12 @@ export class DictionaryComponent implements OnInit, OnDestroy {
               wordNames[0]
             )
             .subscribe(() => {
-              this.message$$.next('word added');
-              console.log('word added');
+              this.mutualDictionaryProfile.message$$.next({
+                type: 'add',
+                text: 'word added',
+              });
               setTimeout(() => {
-                this.message$$.next(null);
+                this.mutualDictionaryProfile.message$$.next(null);
               }, 3000);
             });
         }),
@@ -185,7 +184,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.message$$.unsubscribe();
+    this.mutualDictionaryProfile.message$$.unsubscribe();
     this.mutualDictionaryProfile.favourites$$.unsubscribe();
     this.mutualDictionaryProfile.destroy$$.next();
     this.mutualDictionaryProfile.destroy$$.complete();
