@@ -111,7 +111,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.mutualDictionaryProfile.favourites$$.unsubscribe();
     this.mutualDictionaryProfile.destroy$$.next();
     this.mutualDictionaryProfile.destroy$$.complete();
   }
