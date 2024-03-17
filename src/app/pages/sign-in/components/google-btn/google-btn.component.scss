@@ -1,4 +1,3 @@
-// btn
 @mixin hover-supported {
   @media not all and (pointer: coarse) {
     &:hover {
@@ -51,7 +50,7 @@ button.firebaseui-idp-google {
   .firebaseui-idp-text-long {
     display: none;
 
-    @media (min-width: 269px) {
+    @media (min-width: 400px) {
       display: inline-block;
     }
   }
@@ -59,10 +58,14 @@ button.firebaseui-idp-google {
   .firebaseui-idp-text-short {
     display: inline-block;
 
-    @media (min-width: 269px) {
+    @media (min-width: 400px) {
       display: none;
     }
   }
 }
 
-// btn
+@media (max-width: 684px) {
+  button.firebaseui-idp-google {
+    padding: 12px 10px;
+  }
+}

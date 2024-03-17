@@ -1,7 +1,7 @@
 .footer {
   background-color: var(--accent-1);
   padding: 30px 20px;
-  position: fixed;
+  margin: auto 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -15,6 +15,16 @@
       &:hover {
         text-decoration: underline;
       }
+    }
+  }
+}
+
+@media (max-width: 684px) {
+  .footer {
+    padding: 20px 15px;
+    &__copyright {
+      font-size: 14px;
+      line-height: 18px;
     }
   }
 }

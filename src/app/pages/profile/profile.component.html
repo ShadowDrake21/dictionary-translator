@@ -1,4 +1,3 @@
-<app-header></app-header>
 <section class="container profile">
   <div class="inner profile__inner">
     <div
@@ -27,7 +26,7 @@
           <li
             *ngFor="let fav of favourites"
             class="profile__list-item"
-            (dblclick)="onNavigateByWord(fav)"
+            (press)="onNavigateByWord(fav)"
           >
             <span class="profile__list-item__span">{{ fav }}</span>
             <button
