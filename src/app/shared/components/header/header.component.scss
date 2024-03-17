@@ -22,3 +22,9 @@
     }
   }
 }
+
+@media (max-width: 500px) {
+  .header__inner {
+    gap: 15px;
+  }
+}

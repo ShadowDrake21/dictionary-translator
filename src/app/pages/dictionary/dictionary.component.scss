@@ -105,3 +105,51 @@
 .btn-wrapper {
   width: 100%;
 }
+
+@media (max-width: 900px) {
+  .dictionary__inner {
+    gap: 20px;
+  }
+  .main__title {
+    font-size: 28px;
+    line-height: 34px;
+  }
+}
+
+@media (max-width: 700px) {
+  .dictionary__inner {
+    justify-content: center;
+    flex-direction: column;
+  }
+  .dictionary__part {
+    width: 100%;
+  }
+  .dictionary__results {
+    padding: 10px;
+    min-height: 360px;
+    max-height: 360px;
+    margin: 0;
+  }
+  .dictionary__special {
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .main__title {
+    font-size: 25px;
+    line-height: 29px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dictionary__list-title {
+    font-size: 20px;
+    line-height: 24px;
+  }
+  .dictionary__list-wrapper {
+    margin-bottom: 10px;
+  }
+  .main__title {
+    font-size: 22px;
+    line-height: 26px;
+  }
+}
