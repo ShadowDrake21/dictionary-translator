@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/*"
+  to = "/app/pages/page-not-found/page-not-found.component.html"
+  status = 200
