@@ -18,3 +18,13 @@
     }
   }
 }
+
+@media (max-width: 684px) {
+  .footer {
+    padding: 20px 15px;
+    &__copyright {
+      font-size: 14px;
+      line-height: 18px;
+    }
+  }
+}
