@@ -50,12 +50,12 @@ ul {
 }
 
 .section {
-  min-height: 100vh;
+  min-height: calc(100vh - 156px);
   height: 100%;
 }
 
 .inner {
-  min-height: 100vh;
+  min-height: calc(100vh - 156px);
 }
 
 .main__title {
@@ -84,13 +84,27 @@ ul {
 }
 
 @media (max-width: 684px) {
+  .section {
+    min-height: calc(100vh - 136px);
+  }
   .error__wrapper {
     padding: 5px;
+  }
+  .message {
+    font-size: 18px;
+    line-height: 22px;
   }
 }
 
 @media (max-width: 500px) {
+  .section {
+    min-height: calc(100vh - 128px);
+  }
   .error__wrapper {
     text-align: center;
+  }
+  .message {
+    font-size: 16px;
+    line-height: 20px;
   }
 }
