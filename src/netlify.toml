@@ -1,4 +1,4 @@
 [[redirects]]
   from = "/*"
-  to = "/app/pages/page-not-found/page-not-found.component.html"
+  to = "/index.html"
   status = 200
