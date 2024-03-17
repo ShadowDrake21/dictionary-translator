@@ -12,6 +12,10 @@
       *ngIf="pageIdentificator === 'profile'"
       ><fa-icon [icon]="faHome"></fa-icon>
     </a>
-    <auth-sign-out></auth-sign-out>
+    <auth-sign-out
+      *ngIf="
+        pageIdentificator === 'dictionary' || pageIdentificator == 'profile'
+      "
+    ></auth-sign-out>
   </div>
 </header>
