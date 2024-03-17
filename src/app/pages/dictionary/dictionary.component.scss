@@ -35,14 +35,8 @@
       line-height: 26px;
     }
     &-item {
-      &__desc {
-      }
-      &__span {
-      }
       &_defs {
         list-style-type: circle;
-      }
-      &__def {
       }
     }
   }
@@ -51,9 +45,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 80%;
+    margin: 0;
     text-align: center;
     font-size: 18px;
     line-height: 22px;
+    text-wrap: wrap;
+    word-wrap: break-word;
   }
   &__add-button {
     cursor: pointer;

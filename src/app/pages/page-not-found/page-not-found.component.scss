@@ -5,6 +5,7 @@
     align-items: center;
   }
   &__info {
+    text-align: center;
     &-title {
       font-size: 46px;
       line-height: 50px;
@@ -22,5 +23,49 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+@media (max-width: 900px) {
+  .page-not-found__info-title {
+    font-size: 40px;
+    line-height: 46px;
+  }
+  .page-not-found__links {
+    padding-top: 30px;
+  }
+  .page-not-found__link {
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-not-found__info-title {
+    font-size: 34px;
+    line-height: 40px;
+  }
+  .page-not-found__links {
+    padding-top: 15px;
+  }
+}
+
+@media (max-width: 500px) {
+  .page-not-found__info-title {
+    font-size: 30px;
+    line-height: 36px;
+  }
+  .page-not-found__links {
+    padding-top: 15px;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-not-found__info-title {
+    font-size: 26px;
+    line-height: 32px;
+  }
+  .page-not-found__links {
+    padding-top: 10px;
   }
 }
