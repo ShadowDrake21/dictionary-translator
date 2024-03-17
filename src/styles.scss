@@ -82,3 +82,15 @@ ul {
   line-height: 24px;
   font-weight: 700;
 }
+
+@media (max-width: 684px) {
+  .error__wrapper {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 500px) {
+  .error__wrapper {
+    text-align: center;
+  }
+}
