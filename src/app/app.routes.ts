@@ -13,10 +13,6 @@ export const routes: Routes = [
   {
     path: 'dictionary',
     component: DictionaryComponent,
-    // loadChildren: () =>
-    //   import('./pages/translate/translate.component').then(
-    //     (m) => m.TranslateComponent
-    //   ),
     canActivate: [secureInnerPagesGuard],
   },
   {
