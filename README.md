@@ -8,7 +8,7 @@ The technology stack contains: Angular and RxJS for front-end, Firebase Realtime
 
 # Quick tutorial
 
-![](https://github.com/ShadowDrake21/dictionary-translator/tree/main/src/assets/readme-gif.gif)
+![Quick tutorial](https://github.com/ShadowDrake21/dictionary-translator/raw/main/src/assets/readme-gif.gif)
 
 # How to work with the application?
 
