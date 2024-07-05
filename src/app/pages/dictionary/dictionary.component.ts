@@ -18,9 +18,12 @@ import {
   finalize,
   map,
   of,
+  share,
+  shareReplay,
   startWith,
   switchMap,
   take,
+  takeLast,
   takeUntil,
   tap,
   timer,
@@ -67,6 +70,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getQueryParams();
     this.mutualDictionaryProfile.getUserAndPerformActions();
+
+    this.fetchWordData();
   }
 
   getQueryParams() {
@@ -101,7 +106,6 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   onInput() {
     this.mutualDictionaryProfile.error$$.next(null);
     if (this.dictionaryForm.value.word) {
-      this.fetchWordData();
       return;
     }
 
@@ -112,7 +116,6 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     const fetchWordDataSubscription = this.dictionaryForm
       .get('word')!
       .valueChanges.pipe(
-        startWith(this.dictionaryForm.get('word')!.value),
         debounceTime(700),
         distinctUntilChanged(),
         switchMap((searchTerm: string | null) => {
