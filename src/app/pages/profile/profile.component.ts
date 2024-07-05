@@ -95,7 +95,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => {
-        console.log(`word ${word} deleted`);
         this.mutualDictionaryProfile.message$$.next({
           type: 'delete',
           text: `word "${word}" deleted`,

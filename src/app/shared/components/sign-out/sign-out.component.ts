@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/authentication/auth.service';
 import { CustomBtnComponent } from '../UI/custom-btn/custom-btn.component';
+import { of, throwError } from 'rxjs';
 
 @Component({
   selector: 'auth-sign-out',
@@ -17,14 +18,11 @@ export class SignOutComponent {
   private router = inject(Router);
 
   signOut() {
-    this.authService.signOut().subscribe(
-      () => {
-        console.log('successful sign out');
+    this.authService.signOut().subscribe({
+      next: () => {
         this.router.navigateByUrl('/sign-in');
       },
-      () => {
-        console.log('error during signing out');
-      }
-    );
+      error: () => of('Error during sign out!'),
+    });
   }
 }

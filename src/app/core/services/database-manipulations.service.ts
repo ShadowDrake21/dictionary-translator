@@ -25,7 +25,6 @@ export class DatabaseManipulationsService {
       })
     ).pipe(
       catchError((error) => {
-        console.log(error);
         throw error;
       })
     );
@@ -45,7 +44,6 @@ export class DatabaseManipulationsService {
         }
       }),
       catchError((error) => {
-        console.error(error);
         throw error;
       })
     );
@@ -59,7 +57,6 @@ export class DatabaseManipulationsService {
       remove(ref(this.database, `dictionary/${userUid}/words/${word}`))
     ).pipe(
       catchError((error) => {
-        console.log(error);
         throw error;
       })
     );
@@ -68,7 +65,6 @@ export class DatabaseManipulationsService {
   deleteFullUserDictionary(userUid: string | undefined): Observable<void> {
     return from(remove(ref(this.database, `dictionary/${userUid}`))).pipe(
       catchError((error) => {
-        console.log(error);
         throw error;
       })
     );

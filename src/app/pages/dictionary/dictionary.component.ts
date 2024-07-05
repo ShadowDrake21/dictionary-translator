@@ -9,6 +9,7 @@ import {
 import {
   BehaviorSubject,
   Observable,
+  Subscription,
   catchError,
   debounceTime,
   delay,
@@ -61,6 +62,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   isFavourite$: Observable<boolean> | null = null;
 
+  private subscriptions: Subscription[] = [];
+
   ngOnInit(): void {
     this.getQueryParams();
     this.mutualDictionaryProfile.getUserAndPerformActions();
@@ -69,8 +72,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   getQueryParams() {
     this.activatedRoute.queryParams
       .pipe(
-        takeUntil(this.mutualDictionaryProfile.destroy$$),
-        tap(() => this.mutualDictionaryProfile.words$$.next([]))
+        tap(() => this.mutualDictionaryProfile.words$$.next([])),
+        takeUntil(this.mutualDictionaryProfile.destroy$$)
       )
       .subscribe((word: object) => {
         if (word && Object.keys(word).length > 0) {
@@ -106,7 +109,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   fetchWordData() {
-    this.dictionaryForm
+    const fetchWordDataSubscription = this.dictionaryForm
       .get('word')!
       .valueChanges.pipe(
         startWith(this.dictionaryForm.get('word')!.value),
@@ -127,18 +130,17 @@ export class DictionaryComponent implements OnInit, OnDestroy {
           }
         })
       )
-      .subscribe(
-        (words: IDictionaryWord[]) => {
-          this.mutualDictionaryProfile.words$$.next([...words]);
-          const wordArr = this.mutualDictionaryProfile.words$$.getValue();
-          this.isFavourite$ = this.markBtnFavAsHidden(wordArr[0]);
-        },
-        () => console.log('Completed')
-      );
+      .subscribe((words: IDictionaryWord[]) => {
+        this.mutualDictionaryProfile.words$$.next([...words]);
+        const wordArr = this.mutualDictionaryProfile.words$$.getValue();
+        this.isFavourite$ = this.markBtnFavAsHidden(wordArr[0]);
+      });
+
+    this.subscriptions.push(fetchWordDataSubscription);
   }
 
   onAddToFavs() {
-    this.mutualDictionaryProfile.words$$
+    const addWordSubscription = this.mutualDictionaryProfile.words$$
       .pipe(
         map((words) => words.map((word) => word.word)),
         distinct(),
@@ -168,6 +170,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+
+    this.subscriptions.push(addWordSubscription);
   }
 
   markBtnFavAsHidden(
@@ -184,8 +188,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.mutualDictionaryProfile.message$$.unsubscribe();
-    this.mutualDictionaryProfile.favourites$$.unsubscribe();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     this.mutualDictionaryProfile.destroy$$.next();
     this.mutualDictionaryProfile.destroy$$.complete();
   }
