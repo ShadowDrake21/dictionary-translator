@@ -6,11 +6,11 @@ The main purpose of the project is to demonstrate how the author (me) can work w
 
 The technology stack contains: Angular and RxJS for front-end, Firebase Realtime Database as the main database.
 
-# Quick tutorial
+## Quick tutorial
 
 ![Quick tutorial](https://github.com/ShadowDrake21/dictionary-translator/raw/main/src/assets/readme-gif.gif)
 
-# How to work with the application?
+## How to work with the application?
 
 Very easely. You just should authorize by your google profile and get started.
 
